@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+
 import Loader from "./Loader";
 
 // Function to wrap lazy components in <Suspense>

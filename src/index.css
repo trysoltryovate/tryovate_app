@@ -10,4 +10,43 @@ html {
   body {
     @apply h-full w-full overflow-x-hidden;
   }
+
+  /* Scrollbar Track (Background) */
+  *::-webkit-scrollbar {
+    background-color: rgb(47, 46, 46);
+    width: 6px;
+    height: 6px;
+  }
+
+  /* Scrollbar Thumb (Draggable part) */
+  *::-webkit-scrollbar-thumb {
+    background-color: #5f6061;
+    border-radius: 10px;
+  }
+
+  /* Scrollbar Thumb on Hover */
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: #3e4348;
+  }
+
+  /* Scrollbar Track (Invisible background) */
+  *::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  /* Scrollbar Corner (if applicable) */
+  *::-webkit-scrollbar-corner {
+    background-color: transparent;
+  }
 }
+
+.blob {
+  background: conic-gradient(
+    from 2.35rad,
+    rgba(23, 46, 246, 0.643),
+    rgba(133, 134, 143, 0.5)
+  );
+}
+/* .blob {
+  background: conic-gradient(from 2.35rad, #c76000, rgba(7, 29, 228, 0.5));
+} */

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FaCircleCheck } from "react-icons/fa6";
-import { IoMdInformationCircle } from "react-icons/io";
+import { IoMdEyeOff, IoMdInformationCircle } from "react-icons/io";
+import { IoEye } from "react-icons/io5";
 
 import Logo from "../../assets/logo.jpg";
 
@@ -11,6 +12,8 @@ export default function Login() {
   const [passwordError, setPasswordError] = useState("");
   const [isError, setIsError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+
+  const [isPassVisible, setIsPassVisible] = useState(false);
 
   const validateLoginId = (e) => {
     setLoginId(e.target.value);
@@ -128,26 +131,36 @@ export default function Login() {
                 Password
               </label>
               {/* Password */}
-              <input
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  const validation = validatePassword(e.target.value);
-                  setPasswordError(validation.message);
-                  setIsError(validation.isError);
-                  setIsSuccess(validation.isSuccess);
-                }}
-                className={`border ${
-                  password.length === 0
-                    ? "border-gray-400"
-                    : isSuccess
-                      ? "border-green-500 focus-visible:ring-green-100"
-                      : "border-red-500 focus-visible:ring-red-100"
-                } bg-background ring-offset-background placeholder:text-muted-foreground my-1 flex h-9 w-full rounded-md px-3 py-2 text-base font-medium opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm`}
-                placeholder="Enter password"
-              />
+              <div className="relative">
+                <input
+                  type={isPassVisible ? "text" : "password"}
+                  id="password"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    const validation = validatePassword(e.target.value);
+                    setPasswordError(validation.message);
+                    setIsError(validation.isError);
+                    setIsSuccess(validation.isSuccess);
+                  }}
+                  className={`border ${
+                    password.length === 0
+                      ? "border-gray-400"
+                      : isSuccess
+                        ? "border-green-500 focus-visible:ring-green-100"
+                        : "border-red-500 focus-visible:ring-red-100"
+                  } bg-background ring-offset-background placeholder:text-muted-foreground my-1 flex h-9 w-full rounded-md px-3 py-2 text-base font-medium opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm`}
+                  placeholder="Enter password"
+                />
+
+                <button
+                  type="button"
+                  className="absolute right-2 top-2 rounded-md border border-transparent px-2 py-1 text-gray-400 outline-1 hover:cursor-pointer hover:border-gray-100 hover:bg-gray-100 hover:text-gray-700"
+                  onClick={() => setIsPassVisible(!isPassVisible)}
+                >
+                  {isPassVisible ? <IoEye /> : <IoMdEyeOff />}
+                </button>
+              </div>
               {
                 <p
                   className={`inline-flex items-center gap-x-1 text-[12px] font-semibold ${

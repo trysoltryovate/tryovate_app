@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -8,7 +10,7 @@ html {
 
 @layer base {
   body {
-    @apply h-full w-full overflow-x-hidden;
+    @apply font-inter h-full w-full overflow-x-hidden;
   }
 
   /* Scrollbar Track (Background) */
@@ -50,3 +52,25 @@ html {
 /* .blob {
   background: conic-gradient(from 2.35rad, #c76000, rgba(7, 29, 228, 0.5));
 } */
+
+.form-shadow {
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+/* Loader Styles */
+.loader {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  box-sizing: border-box;
+  border-top: 6px solid #5b5a5a;
+  border-left: 6px solid #5b5a5a;
+  border-right: 6px solid rgba(197, 197, 196, 0);
+  animation: loader 0.7s infinite linear;
+}
+
+@keyframes loader {
+  to {
+    transform: rotate(360deg);
+  }
+}

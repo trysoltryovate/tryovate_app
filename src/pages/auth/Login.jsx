@@ -7,7 +7,7 @@ export default function Login() {
     <>
       <main className="container flex min-h-screen items-center justify-center">
         <section className="h-auto w-[90dvw] max-w-[450px] p-3 md:p-4">
-          <div className="h-full w-full rounded-md border-2 p-3 shadow-xl md:p-5 lg:py-8">
+          <div className="form-shadow h-full w-full rounded-lg p-3 md:p-5 lg:py-8">
             <div className="mb-3 flex flex-col items-center justify-center gap-y-1 md:mb-5">
               <div className="h-8 w-8 overflow-hidden md:h-16 md:w-16">
                 <img

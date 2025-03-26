@@ -16,12 +16,13 @@ export default function Landing() {
             />
           </Link>
 
-          <button
+          <Link
+            to={"/login"}
             className="rounded-md bg-blue-500 px-4 py-1 text-white transition-all duration-300 ease-linear hover:bg-blue-700 hover:shadow-md md:px-6 md:py-2 md:font-medium"
             title="Login to Tryovate"
           >
             Login
-          </button>
+          </Link>
         </nav>
       </header>
       <main className="bg-[#0b0b0e]">

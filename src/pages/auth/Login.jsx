@@ -3,7 +3,7 @@ import { FaCircleCheck } from "react-icons/fa6";
 import { IoMdEyeOff, IoMdInformationCircle } from "react-icons/io";
 import { IoEye } from "react-icons/io5";
 
-import Logo from "../../assets/logo.jpg";
+import Logo from "../../assets/logo.png";
 
 export default function Login() {
   const [loginId, setLoginId] = useState("");
@@ -29,7 +29,7 @@ export default function Login() {
   const validatePassword = (value) => {
     const minLength = value.length >= 8;
     const hasNumber = /[0-9]/.test(value);
-    const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(value);
+    const hasSymbol = /[!@#$%&*]/.test(value);
 
     if (!value)
       return {
@@ -51,7 +51,7 @@ export default function Login() {
       };
     if (!hasSymbol)
       return {
-        message: "Password must contain at least one symbol eg. !@#$%.",
+        message: "Password must contain at least one symbol eg. !@#$%&*",
         isError: true,
         isSuccess: false,
       };
@@ -88,7 +88,7 @@ export default function Login() {
             <div className="flex flex-col gap-y-1">
               <label
                 htmlFor="loginId"
-                className="ml-1 text-sm font-semibold opacity-80"
+                className="ml-1 w-max text-sm font-semibold opacity-80"
               >
                 Login ID
               </label>
@@ -113,7 +113,7 @@ export default function Login() {
                       ? loginId.length >= 4
                         ? "text-green-600"
                         : "text-red-500"
-                      : "text-green-500"
+                      : "text-red-500"
                   } ${loginIdError ? "opacity-100" : "opacity-0"}`}
                 >
                   {isSuccess ? <FaCircleCheck /> : <IoMdInformationCircle />}{" "}
@@ -126,7 +126,7 @@ export default function Login() {
             <div className="flex flex-col gap-y-1">
               <label
                 htmlFor="password"
-                className="ml-1 text-sm font-semibold opacity-80"
+                className="ml-1 w-max text-sm font-semibold opacity-80"
               >
                 Password
               </label>
@@ -158,7 +158,7 @@ export default function Login() {
                   className="absolute right-2 top-2 rounded-md border border-transparent px-2 py-1 text-gray-400 outline-1 hover:cursor-pointer hover:border-gray-100 hover:bg-gray-100 hover:text-gray-700"
                   onClick={() => setIsPassVisible(!isPassVisible)}
                 >
-                  {isPassVisible ? <IoEye /> : <IoMdEyeOff />}
+                  {isPassVisible ? <IoMdEyeOff /> : <IoEye />}
                 </button>
               </div>
               {

@@ -3,7 +3,7 @@ import { FaCircleCheck } from "react-icons/fa6";
 import { IoMdEyeOff, IoMdInformationCircle } from "react-icons/io";
 import { IoEye } from "react-icons/io5";
 
-import Logo from "../../assets/logo.jpg";
+import Logo from "../../assets/logo.png";
 
 export default function Login() {
   const [loginId, setLoginId] = useState("");

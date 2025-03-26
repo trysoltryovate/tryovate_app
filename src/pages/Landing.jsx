@@ -1,12 +1,19 @@
 import { Link } from "react-router-dom";
 
+import Logo from "../assets/logo.png";
+
 export default function Landing() {
   return (
     <>
       <header className="h-16 w-full bg-[#0b0b0e] text-white">
         <nav className="container flex h-full w-full items-center justify-between">
           <Link className="font-bold italic" to={"/"} title="Go to Home page">
-            Tryovate
+            <img
+              src={Logo}
+              alt="tryovate_logo"
+              title="Tryovate"
+              className="w-[42px] md:w-[52px] lg:w-[62px]"
+            />
           </Link>
 
           <button

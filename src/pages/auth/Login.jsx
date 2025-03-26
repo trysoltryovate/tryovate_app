@@ -1,7 +1,9 @@
+import axios from "axios";
 import { useState } from "react";
 import { FaCircleCheck } from "react-icons/fa6";
 import { IoMdEyeOff, IoMdInformationCircle } from "react-icons/io";
 import { IoEye } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
 import Logo from "../../assets/logo.png";
 
@@ -14,6 +16,8 @@ export default function Login() {
   const [isSuccess, setIsSuccess] = useState(false);
 
   const [isPassVisible, setIsPassVisible] = useState(false);
+
+  const navigate = useNavigate();
 
   const validateLoginId = (e) => {
     setLoginId(e.target.value);
@@ -63,13 +67,32 @@ export default function Login() {
     };
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const user = { username: loginId, password: password };
+
+    try {
+      const res = await axios.post("http://192.168.0.185:2020/login", user);
+
+      if (res.data) {
+        console.log(res.data, "Logged In Successfully!");
+        navigate("/home");
+      } else {
+        console.log("Login Failed!");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <main className="container flex min-h-screen items-center justify-center">
       <section className="h-auto w-[90dvw] max-w-[450px] p-3 md:p-4">
         <div className="form-shadow h-full w-full rounded-lg p-3 md:p-5 lg:py-8">
           {/* Logo & Heading */}
           <div className="mb-3 flex flex-col items-center justify-center gap-y-1 md:mb-5">
-            <div className="h-8 w-8 overflow-hidden md:h-16 md:w-16">
+            <div className="mb-5 h-8 w-8 overflow-hidden md:h-[84px] md:w-[84px]">
               <img
                 src={Logo}
                 alt="Company Logo"
@@ -83,7 +106,10 @@ export default function Login() {
           </div>
 
           {/* Form */}
-          <form className="flex flex-col gap-y-3">
+          <form
+            className="flex flex-col gap-y-3"
+            onSubmit={(e) => handleSubmit(e)}
+          >
             {/* Login ID */}
             <div className="flex flex-col gap-y-1">
               <label

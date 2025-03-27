@@ -15,6 +15,8 @@ export default function Login() {
   const [isError, setIsError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
+  const [isLoginFailed, setIsLoginFailed] = useState(false);
+
   const [isPassVisible, setIsPassVisible] = useState(false);
 
   const navigate = useNavigate();
@@ -73,16 +75,24 @@ export default function Login() {
     const user = { username: loginId, password: password };
 
     try {
-      const res = await axios.post("http://192.168.0.185:2020/login", user);
+      const res = await axios.post(import.meta.env.VITE_LOGIN_API_URL, user);
 
-      if (res.data) {
+      if (res.status === 200) {
         console.log(res.data, "Logged In Successfully!");
         navigate("/home");
-      } else {
-        console.log("Login Failed!");
       }
     } catch (error) {
-      console.log(error);
+      if (error.response) {
+        if (error.response.status === 401) {
+          console.log("Invalid login credentials!");
+          setIsError(true);
+          setIsLoginFailed(true);
+        } else {
+          console.log("Login failed due to server error.");
+        }
+      } else {
+        console.log("Network error. Please try again.");
+      }
     }
   };
 
@@ -92,7 +102,7 @@ export default function Login() {
         <div className="form-shadow h-full w-full rounded-lg p-3 md:p-5 lg:py-8">
           {/* Logo & Heading */}
           <div className="mb-3 flex flex-col items-center justify-center gap-y-1 md:mb-5">
-            <div className="mb-5 h-8 w-8 overflow-hidden md:h-[84px] md:w-[84px]">
+            <div className="mb-5 h-16 w-16 overflow-hidden md:h-[84px] md:w-[84px]">
               <img
                 src={Logo}
                 alt="Company Logo"
@@ -103,6 +113,12 @@ export default function Login() {
             <p className="text-sm font-medium opacity-70">
               Please enter your details to login.
             </p>
+
+            {isLoginFailed && (
+              <p className="mt-2 inline-flex items-center gap-x-1 text-[12px] font-semibold text-red-500">
+                <IoMdInformationCircle /> Invalid login credentials!
+              </p>
+            )}
           </div>
 
           {/* Form */}
@@ -126,13 +142,13 @@ export default function Login() {
                 className={`border ${
                   loginId.length < 4
                     ? "border-gray-400"
-                    : loginIdError.includes("correct")
+                    : loginIdError.includes("correct") && !isLoginFailed
                       ? "border-green-500 focus-visible:ring-green-100"
                       : "border-red-500 focus-visible:ring-red-100"
                 } bg-background ring-offset-background placeholder:text-muted-foreground my-1 flex h-9 w-full rounded-md px-3 py-2 text-base font-medium opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm`}
                 placeholder="Enter user ID"
               />
-              {
+              {!isLoginFailed && (
                 <p
                   className={`inline-flex items-center gap-x-1 text-[12px] font-semibold ${
                     loginId
@@ -145,7 +161,7 @@ export default function Login() {
                   {isSuccess ? <FaCircleCheck /> : <IoMdInformationCircle />}{" "}
                   {loginIdError}
                 </p>
-              }
+              )}
             </div>
 
             {/* Password */}
@@ -172,7 +188,7 @@ export default function Login() {
                   className={`border ${
                     password.length === 0
                       ? "border-gray-400"
-                      : isSuccess
+                      : isSuccess && !isLoginFailed
                         ? "border-green-500 focus-visible:ring-green-100"
                         : "border-red-500 focus-visible:ring-red-100"
                   } bg-background ring-offset-background placeholder:text-muted-foreground my-1 flex h-9 w-full rounded-md px-3 py-2 text-base font-medium opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm`}
@@ -187,7 +203,7 @@ export default function Login() {
                   {isPassVisible ? <IoMdEyeOff /> : <IoEye />}
                 </button>
               </div>
-              {
+              {!isLoginFailed && (
                 <p
                   className={`inline-flex items-center gap-x-1 text-[12px] font-semibold ${
                     isSuccess ? "text-green-600" : "text-red-500"
@@ -196,7 +212,7 @@ export default function Login() {
                   {isSuccess ? <FaCircleCheck /> : <IoMdInformationCircle />}{" "}
                   {passwordError}
                 </p>
-              }
+              )}
             </div>
 
             {/* Submit Button */}

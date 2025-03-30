@@ -6,7 +6,7 @@ import Logo from "../assets/logo.png";
 export default function SecondaryNavbar() {
   return (
     <>
-      <header className="container h-16 w-full border-b py-2">
+      <header className="h-14 w-full border-b py-2">
         <nav className="flex h-full w-full items-center justify-between">
           <Link className="font-bold italic" to={"/"} title="Go to Home page">
             <img

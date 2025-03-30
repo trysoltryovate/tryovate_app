@@ -10,7 +10,11 @@ html {
 
 @layer base {
   body {
-    @apply font-inter h-full w-full overflow-x-hidden;
+    @apply h-full w-full overflow-x-hidden font-inter;
+  }
+
+  .lg-ctr {
+    @apply mx-auto max-w-[1910px] lg:px-2;
   }
 
   /* Scrollbar Track (Background) */

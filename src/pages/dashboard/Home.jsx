@@ -10,16 +10,16 @@ export default function Home() {
     <>
       <SecondaryNavbar />
 
-      <main className="container relative min-h-screen w-full border-2">
-        <div className="m-2 flex items-center justify-center gap-x-2">
+      <main className="lg-ctr relative min-h-screen w-full">
+        <div className="m-3 mx-auto flex w-max items-center justify-center gap-x-1 rounded-lg border p-1 md:my-4">
           <button
             onClick={() => setShowDashboard(true)}
-            className="rounded-lg border bg-gray-200 px-4 py-2 font-medium hover:bg-gray-300 hover:shadow-md"
+            className={`rounded-md border px-4 py-2 font-medium hover:shadow-md ${showDashboard ? "bg-blue-100 text-blue-800 hover:bg-blue-200" : "bg-gray-100 hover:bg-gray-200"}`}
           >
             Welcome
           </button>
           <button
-            className="rounded-lg border bg-gray-200 px-4 py-2 font-medium hover:bg-gray-300 hover:shadow-md"
+            className={`rounded-md border px-4 py-2 font-medium hover:shadow-md ${!showDashboard ? "bg-blue-100 text-blue-800 hover:bg-blue-200" : "bg-gray-100 hover:bg-gray-200"}`}
             onClick={() => setShowDashboard(false)}
           >
             Dashboard

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 export default function Welcome() {
   return (
     <>
-      <div>
+      <section>
         <h1 className="text-3xl font-bold">Welcome User...!</h1>
 
         <Link to={"/employee/add-employee"}>
@@ -11,7 +11,7 @@ export default function Welcome() {
             Add Employee
           </button>
         </Link>
-      </div>
+      </section>
     </>
   );
 }

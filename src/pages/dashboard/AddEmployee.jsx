@@ -9,7 +9,7 @@ export default function AddEmployee() {
     <>
       <SecondaryNavbar />
 
-      <main className="container relative mb-10 min-h-screen border-2 py-10">
+      <main className="relative mx-auto mb-10 min-h-screen max-w-[1910px] py-10 lg:px-2">
         <h1 className="my-3 text-xl font-bold">Main Form (Add Employee)</h1>
 
         <hr />

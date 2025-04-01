@@ -24,27 +24,27 @@ const steps = [
 export default function AddEmplyForm() {
   const [activeStep, setActiveStep] = React.useState(0);
   const [formData, setFormData] = React.useState({
-    fullName: "Shivaprasad Bilgundi",
-    dob: "2000-08-11",
+    fullName: "jathin",
+    dob: "1998-01-03",
     gender: "Male",
-    contactNumber: "6361197941",
-    email: "shiv.bilgundi11@gmail.com",
-    currentAddress: "Gachibowli Hyderabad",
-    permanentAddress: "kalaburagi 585104 , Karnataka, India",
-    motherName: "Sunita",
-    fatherName: "Basavaraj",
-    alternativeNumber: "9980490796",
-    aadharCard: "123412341234",
-    panCard: "FFFFF4568D",
-    reference: "Self",
-    highestDegree: "Intermediate",
-    university: "Shree Guru College",
-    yearOfPassing: "2016",
-    specialization: "Science",
-    percentage: "60",
-    longMemo: "Something",
-    offeringCourse: "ReactJS",
-    payment: "Full Payment",
+    contactNumber: "1364567890",
+    email: "shiv@example.com",
+    currentAddress: "123 Main St, City",
+    permanentAddress: "456 Elm St, Hometown",
+    motherName: "Jane Doe",
+    fatherName: "Richard Doe",
+    alternateNumber: "9987654321",
+    aadharCard: "123456789101",
+    panCard: "ABCDE1234F",
+    reference: "Friend",
+    highestDegree: "degree",
+    universityCollegeName: "JNTU",
+    yearOfPassing: 2022,
+    specializationMajor: "Computer",
+    percentageCgpa: 6.8,
+    longMemo: "Available",
+    selectedCourse: "java",
+    paymentType: "partial",
   });
 
   const handleChange = (e) => {
@@ -55,7 +55,7 @@ export default function AddEmplyForm() {
   const handleSubmit = async () => {
     try {
       const response = await axios.post(
-        "http://192.168.0.183:2020/add-candidate",
+        import.meta.env.VITE_ADD_EMPLOYEE_API_URL,
         formData,
       );
       console.log("Success with response:", response.data);

@@ -17,7 +17,7 @@ export default function Welcome() {
         <section className="bg-[#EEEDEF] p-3 md:p-6 lg:p-8">
           <h5 className="text-xl font-semibold md:text-2xl">My Favourites</h5>
           <div className="flex h-auto w-full flex-wrap items-center gap-3 py-5 md:gap-4">
-            <Link to={"/employee/add-employee"}>
+            <Link to={"/candidates/add-candidate"}>
               <div className={`favCard`}>
                 <span className="rounded-lg bg-blue-300 p-1 text-lg md:p-2">
                   <IoPersonOutline />
@@ -25,7 +25,7 @@ export default function Welcome() {
                 <h4 className="text-base">Add Employee</h4>
               </div>
             </Link>
-            <Link to={"/employee/add-employee"}>
+            <Link to={"/candidates/add-candidate"}>
               <div className={`favCard`}>
                 <span className="rounded-lg bg-blue-300 p-1 text-lg md:p-2">
                   <IoPersonOutline />
@@ -33,7 +33,7 @@ export default function Welcome() {
                 <h4 className="text-base">Update Employee Data</h4>
               </div>
             </Link>
-            <Link to={"/employee/add-employee"}>
+            <Link to={"/candidates/add-candidate"}>
               <div
                 className={`favCard border-orange-300 bg-orange-100 hover:bg-orange-100`}
               >
@@ -43,7 +43,7 @@ export default function Welcome() {
                 <h4 className="text-base">Update Payroll Data</h4>
               </div>
             </Link>
-            <Link to={"/employee/add-employee"}>
+            <Link to={"/candidates/add-candidate"}>
               <div
                 className={`favCard border-orange-300 bg-orange-100 hover:bg-orange-100`}
               >

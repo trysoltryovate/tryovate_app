@@ -6,7 +6,7 @@ import LazyLoad from "../components/LazyLoader";
 const Landing = lazy(() => import("../pages/Landing"));
 const Login = lazy(() => import("../pages/auth/Login"));
 const Home = lazy(() => import("../pages/dashboard/Home"));
-const AddEmployee = lazy(() => import("../pages/dashboard/AddEmployee"));
+const AddCandidates = lazy(() => import("../pages/dashboard/AddCandidates"));
 
 export const router = createBrowserRouter([
   {
@@ -22,7 +22,7 @@ export const router = createBrowserRouter([
     element: LazyLoad(Home),
   },
   {
-    path: "/employee/add-employee",
-    element: LazyLoad(AddEmployee),
+    path: "/candidates/add-candidate",
+    element: LazyLoad(AddCandidates),
   },
 ]);

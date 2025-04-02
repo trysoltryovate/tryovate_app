@@ -21,19 +21,19 @@ const steps = [
   "Payment Structure",
 ];
 
-export default function AddEmplyForm() {
+export default function AddCandForm() {
   const [activeStep, setActiveStep] = React.useState(0);
   const [formData, setFormData] = React.useState({
-    fullName: "jathin",
+    fullName: "krunal",
     dob: "1998-01-03",
     gender: "Male",
     contactNumber: "1364567890",
-    email: "shiv@example.com",
+    email: "krunal@example.com",
     currentAddress: "123 Main St, City",
     permanentAddress: "456 Elm St, Hometown",
     motherName: "Jane Doe",
     fatherName: "Richard Doe",
-    alternateNumber: "9987654321",
+    alternateNumber: "0987654321",
     aadharCard: "123456789101",
     panCard: "ABCDE1234F",
     reference: "Friend",
@@ -162,8 +162,8 @@ export default function AddEmplyForm() {
             />
             <TextField
               label="Alternative Number"
-              name="alternativeNumber"
-              value={formData.alternativeNumber}
+              name="alternateNumber"
+              value={formData.alternateNumber}
               onChange={handleChange}
               margin="dense"
             />
@@ -202,8 +202,8 @@ export default function AddEmplyForm() {
             />
             <TextField
               label="University/College Name"
-              name="university"
-              value={formData.university}
+              name="universityCollegeName"
+              value={formData.universityCollegeName}
               onChange={handleChange}
               margin="dense"
             />
@@ -217,24 +217,16 @@ export default function AddEmplyForm() {
             />
             <TextField
               label="Specialization/Major"
-              name="specialization"
-              value={formData.specialization}
+              name="specializationMajor"
+              value={formData.specializationMajor}
               onChange={handleChange}
               margin="dense"
             />
             <TextField
               label="Percentage/CGPA"
-              name="percentage"
+              name="percentageCgpa"
               type="number"
-              value={formData.percentage}
-              onChange={handleChange}
-              margin="dense"
-            />
-            <TextField
-              multiline
-              label="Long Memo"
-              name="longMemo"
-              value={formData.longMemo}
+              value={formData.percentageCgpa}
               onChange={handleChange}
               margin="dense"
             />
@@ -242,13 +234,19 @@ export default function AddEmplyForm() {
         );
       case 2:
         return (
-          <FormControl margin="dense">
-            <FormLabel>Offering Course</FormLabel>
+          <FormControl margin="normal">
+            <FormLabel sx={{ marginBottom: "10px" }}>
+              Offering Course:
+            </FormLabel>
             <Select
-              name="offeringCourse"
-              value={formData.offeringCourse}
+              name="selectedCourse"
+              value={formData.selectedCourse}
               onChange={handleChange}
+              displayEmpty
             >
+              <MenuItem value="" disabled>
+                Select a course
+              </MenuItem>
               <MenuItem value="Java Backend">Java Backend</MenuItem>
               <MenuItem value="JAVA FS">JAVA FS</MenuItem>
               <MenuItem value="ReactJS">ReactJS</MenuItem>
@@ -256,9 +254,7 @@ export default function AddEmplyForm() {
                 .Net with Angular (FS)
               </MenuItem>
               <MenuItem value="Data Analytics">Data Analytics</MenuItem>
-              <MenuItem value="Data Engineer - Azure/GCP/AWS/DevOps">
-                Data Engineer - Azure/GCP/AWS/DevOps
-              </MenuItem>
+              <MenuItem value="Data Engineer">Data Engineer</MenuItem>
             </Select>
           </FormControl>
         );
@@ -268,8 +264,8 @@ export default function AddEmplyForm() {
             <FormLabel>Payment Structure</FormLabel>
             <RadioGroup
               row
-              name="payment"
-              value={formData.payment}
+              name="paymentType"
+              value={formData.paymentType}
               onChange={handleChange}
             >
               <FormControlLabel

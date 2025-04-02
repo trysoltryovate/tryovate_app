@@ -79,7 +79,7 @@ export default function Login() {
 
       if (res.status === 200) {
         console.log(res.data, "Logged In Successfully!");
-        navigate("/home");
+        navigate("/dashboard/home");
       }
     } catch (error) {
       if (error.response) {

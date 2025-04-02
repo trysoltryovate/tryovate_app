@@ -9,6 +9,7 @@ const Home = lazy(() => import("../pages/dashboard/Home"));
 const Dashboard = lazy(() => import("../pages/dashboard/Dashboard"));
 const AddCandidates = lazy(() => import("../pages/dashboard/AddCandidates"));
 const Candidates = lazy(() => import("../pages/Candidates"));
+const NotFound = lazy(() => import("../components/Not-Found"));
 
 export const router = createBrowserRouter([
   {
@@ -30,6 +31,7 @@ export const router = createBrowserRouter([
       {
         path: "/dashboard/candidates",
         element: LazyLoad(Candidates),
+        errorElement: LazyLoad(NotFound),
       },
       {
         path: "/dashboard/candidates/add-candidate",

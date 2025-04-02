@@ -25,7 +25,7 @@ export default function Welcome() {
                 <h4 className="text-base">Add Employee</h4>
               </div>
             </Link>
-            <Link to={"/dashboard/candidates/add-candidate"}>
+            <Link to={"/dashboard/candidates"}>
               <div className={`favCard`}>
                 <span className="rounded-lg bg-blue-300 p-1 text-lg md:p-2">
                   <IoPersonOutline />

@@ -1,9 +1,12 @@
+import { Outlet } from "react-router-dom";
+
+import SecondaryNavbar from "../../components/SecondNavbar";
+
 export default function Dashboard() {
   return (
     <>
-      <div>
-        <h1 className="text-3xl font-bold">Dashboard Area...!</h1>
-      </div>
+      <SecondaryNavbar />
+      <Outlet />
     </>
   );
 }

@@ -1,15 +1,12 @@
 import { useState } from "react";
 
-import SecondaryNavbar from "../../components/SecondNavbar";
-import Dashboard from "./Dashboard";
+import Statistics from "./Statistics";
 import Welcome from "./Welcome";
 
 export default function Home() {
   const [showDashboard, setShowDashboard] = useState(true);
   return (
     <>
-      <SecondaryNavbar />
-
       <main className="lg-ctr relative min-h-screen w-full">
         <div className="absolute left-[50%] right-[50%] m-3 mx-auto flex w-max translate-x-[-120px] items-center justify-center gap-x-1 rounded-lg border p-1 md:my-4">
           <button
@@ -25,7 +22,7 @@ export default function Home() {
             Dashboard
           </button>
         </div>
-        {showDashboard ? <Welcome /> : <Dashboard />}
+        {showDashboard ? <Welcome /> : <Statistics />}
       </main>
     </>
   );

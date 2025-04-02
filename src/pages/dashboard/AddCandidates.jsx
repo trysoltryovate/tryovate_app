@@ -1,13 +1,10 @@
 import { Alert } from "@mui/material";
 
 import AddCandForm from "../../components/AddCandForm";
-import SecondaryNavbar from "../../components/SecondNavbar";
 
 export default function AddCandidates() {
   return (
     <>
-      <SecondaryNavbar />
-
       <main className="lg-ctr relative min-h-screen w-full p-2 md:p-3 lg:p-4">
         <section className="mb-4">
           <Alert severity="info">

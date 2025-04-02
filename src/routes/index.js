@@ -6,7 +6,9 @@ import LazyLoad from "../components/LazyLoader";
 const Landing = lazy(() => import("../pages/Landing"));
 const Login = lazy(() => import("../pages/auth/Login"));
 const Home = lazy(() => import("../pages/dashboard/Home"));
+const Dashboard = lazy(() => import("../pages/dashboard/Dashboard"));
 const AddCandidates = lazy(() => import("../pages/dashboard/AddCandidates"));
+const Candidates = lazy(() => import("../pages/Candidates"));
 
 export const router = createBrowserRouter([
   {
@@ -18,11 +20,21 @@ export const router = createBrowserRouter([
     element: LazyLoad(Login),
   },
   {
-    path: "/home",
-    element: LazyLoad(Home),
-  },
-  {
-    path: "/candidates/add-candidate",
-    element: LazyLoad(AddCandidates),
+    path: "/dashboard",
+    element: LazyLoad(Dashboard),
+    children: [
+      {
+        path: "/dashboard/home",
+        element: LazyLoad(Home),
+      },
+      {
+        path: "/dashboard/candidates",
+        element: LazyLoad(Candidates),
+      },
+      {
+        path: "/dashboard/candidates/add-candidate",
+        element: LazyLoad(AddCandidates),
+      },
+    ],
   },
 ]);

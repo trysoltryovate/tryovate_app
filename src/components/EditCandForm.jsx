@@ -47,7 +47,7 @@ export default function EditCandForm({ candidate }) {
   const handleSubmit = async () => {
     try {
       const response = await axios.put(
-        `${import.meta.env.VITE_UPDATE_CANDIDATE_API_URL}/${candidate?.email}`,
+        `${import.meta.env.VITE_UPDATE_CANDIDATE_API_URL}/${candidate?.id}`,
         formData,
       );
 

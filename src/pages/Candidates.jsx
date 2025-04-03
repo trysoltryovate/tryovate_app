@@ -192,7 +192,7 @@ export default function Candidates() {
                           className="rounded-md border border-orange-200 bg-orange-100 p-2 text-orange-900 hover:bg-orange-200 hover:shadow-lg"
                           onClick={() =>
                             navigate(
-                              `/dashboard/candidates/edit-candidate/${candidate?.email}`,
+                              `/dashboard/candidates/edit-candidate/${candidate?.id}`,
                             )
                           }
                         >

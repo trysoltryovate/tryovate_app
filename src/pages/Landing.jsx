@@ -32,7 +32,7 @@ export default function Landing() {
             Streamline Your Workforce Management Effortlessly
           </h3>
           <p className="z-20 mx-auto flex w-10/12 flex-wrap justify-center gap-2 py-4 text-center opacity-70 md:w-2/3 md:text-xl xl:w-[50%]">
-            A centralized portal for managing employees, attendance, payroll,
+            A centralized portal for managing candidates, attendance, payroll,
             and more - built to streamline HR operations within our company.
           </p>
           <Link

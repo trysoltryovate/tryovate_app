@@ -22,35 +22,17 @@ export default function Welcome() {
                 <span className="rounded-lg bg-blue-300 p-1 text-lg md:p-2">
                   <IoPersonOutline />
                 </span>
-                <h4 className="text-base">Add Employee</h4>
+                <h4 className="text-base">Add Candidate</h4>
               </div>
             </Link>
             <Link to={"/dashboard/candidates"}>
-              <div className={`favCard`}>
-                <span className="rounded-lg bg-blue-300 p-1 text-lg md:p-2">
+              <div
+                className={`favCard border-orange-300 bg-orange-100 hover:bg-orange-100`}
+              >
+                <span className="rounded-lg bg-orange-200 p-1 text-lg md:p-2">
                   <IoPersonOutline />
                 </span>
-                <h4 className="text-base">Update Employee Data</h4>
-              </div>
-            </Link>
-            <Link to={"/dashboard/candidates/add-candidate"}>
-              <div
-                className={`favCard border-orange-300 bg-orange-100 hover:bg-orange-100`}
-              >
-                <span className="rounded-lg bg-orange-200 p-1 text-lg md:p-2">
-                  <FiDatabase />
-                </span>
-                <h4 className="text-base">Update Payroll Data</h4>
-              </div>
-            </Link>
-            <Link to={"/dashboard/candidates/add-candidate"}>
-              <div
-                className={`favCard border-orange-300 bg-orange-100 hover:bg-orange-100`}
-              >
-                <span className="rounded-lg bg-orange-200 p-1 text-lg md:p-2">
-                  <FiDatabase />
-                </span>
-                <h4 className="text-base">Salary statement for a month</h4>
+                <h4 className="text-base">Update Candidate Data</h4>
               </div>
             </Link>
           </div>

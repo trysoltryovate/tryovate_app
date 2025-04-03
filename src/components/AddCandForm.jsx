@@ -69,10 +69,11 @@ export default function AddCandForm() {
   const handleSubmit = async () => {
     try {
       const response = await axios.post(
-        import.meta.env.VITE_ADD_EMPLOYEE_API_URL,
+        import.meta.env.VITE_ADD_CANDIDATE_API_URL,
         formData,
       );
-      if (response.status === 201) {
+
+      if (response.status === 200) {
         setTimeout(() => {
           navigate("/dashboard/candidates");
         }, 800);

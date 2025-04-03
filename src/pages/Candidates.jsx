@@ -16,6 +16,7 @@ import {
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaCircleInfo } from "react-icons/fa6";
+import { HiPlus } from "react-icons/hi";
 import { MdEdit } from "react-icons/md";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { Link, useNavigate } from "react-router-dom";
@@ -48,7 +49,7 @@ export default function Candidates() {
 
       try {
         const res = await axios.get(
-          import.meta.env.VITE_GET_ALL_EMPLOYEES_API_URL,
+          import.meta.env.VITE_GET_ALL_CANDIDATE_API_URL,
         );
         const dta = res.data;
 
@@ -68,7 +69,7 @@ export default function Candidates() {
 
     try {
       await axios.delete(
-        `${import.meta.env.VITE_DELETE_EMPLOYEE_API_URL}/${id}`,
+        `${import.meta.env.VITE_DELETE_CANDIDATE_API_URL}/${id}`,
       );
       setTimeout(() => {
         setCandidatesData((prev) =>
@@ -118,15 +119,26 @@ export default function Candidates() {
           </Breadcrumbs>
         </section>
 
-        <Alert icon={<FaCircleInfo fontSize="inherit" />} severity="info">
-          The candidates directory lists all candidates in the organization.
-        </Alert>
+        <section className="mb-4 px-2 md:px-3">
+          <Alert icon={<FaCircleInfo fontSize="inherit" />} severity="info">
+            The candidates directory lists all candidates in the organization.
+          </Alert>
+        </section>
 
         <Divider
           orientation="horizontal"
           sx={{ margin: "16px 16px" }}
           flexItem
         />
+
+        <section className="flex w-full items-center justify-end px-2 md:px-3">
+          <button
+            className="inline-flex items-center justify-center gap-x-1 rounded-lg bg-blue-200 p-2 px-4 text-blue-800 transition-colors duration-200 hover:bg-blue-300 hover:text-blue-900 hover:shadow-lg"
+            onClick={() => navigate("/dashboard/candidates/add-candidate")}
+          >
+            Add Candidate <HiPlus size={20} />
+          </button>
+        </section>
 
         <section className="p-2 md:p-3 lg:p-4">
           <TableContainer component={Paper} sx={{ borderRadius: "8px" }}>
@@ -158,7 +170,7 @@ export default function Candidates() {
                       }}
                     >
                       <TableCell align="center" className="border-l">
-                        {index + 1}
+                        {candidate?.id}
                       </TableCell>
                       <TableCell align="center">{candidate.fullName}</TableCell>
                       <TableCell align="center">{candidate.dob}</TableCell>
@@ -180,7 +192,7 @@ export default function Candidates() {
                           className="rounded-md border border-orange-200 bg-orange-100 p-2 text-orange-900 hover:bg-orange-200 hover:shadow-lg"
                           onClick={() =>
                             navigate(
-                              `/dashboard/candidates/edit-candidate/${candidate?.id}`,
+                              `/dashboard/candidates/edit-candidate/${candidate?.email}`,
                             )
                           }
                         >

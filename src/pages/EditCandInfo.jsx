@@ -21,7 +21,7 @@ export default function EditCandInfo() {
 
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_GET_EMPLOYEE_BY_ID_API_URL}/${candidateId}`,
+          `${import.meta.env.VITE_GET_CANDIDATE_BY_ID_API_URL}/${candidateId}`,
         );
         const dta = res.data;
         setCandidate(dta);

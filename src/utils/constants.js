@@ -1,5 +1,5 @@
 export const tableFields = [
-  "Id",
+  "Candidate Id",
   "Candidate Name",
   "Date Of Birth",
   "Phone No",

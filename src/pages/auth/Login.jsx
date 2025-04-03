@@ -1,3 +1,4 @@
+import { Alert, Snackbar } from "@mui/material";
 import axios from "axios";
 import { useState } from "react";
 import { FaCircleCheck } from "react-icons/fa6";
@@ -12,14 +13,22 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [loginIdError, setLoginIdError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const [isError, setIsError] = useState(false);
+  const [_, setIsError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-
   const [isLoginFailed, setIsLoginFailed] = useState(false);
-
   const [isPassVisible, setIsPassVisible] = useState(false);
 
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
   const navigate = useNavigate();
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   const validateLoginId = (e) => {
     setLoginId(e.target.value);
@@ -87,11 +96,26 @@ export default function Login() {
           console.log("Invalid login credentials!");
           setIsError(true);
           setIsLoginFailed(true);
+          setSnackbar({
+            open: true,
+            message: "Invalid login credentials!",
+            severity: "error",
+          });
         } else {
           console.log("Login failed due to server error.");
+          setSnackbar({
+            open: true,
+            message: "Server error. Please try again.",
+            severity: "error",
+          });
         }
       } else {
         console.log("Network error. Please try again.");
+        setSnackbar({
+          open: true,
+          message: "Network error. Please try again.",
+          severity: "error",
+        });
       }
     }
   };
@@ -219,11 +243,27 @@ export default function Login() {
             <button
               type="submit"
               className="mt-2 h-10 w-full rounded-md bg-blue-500 font-medium text-white transition-colors duration-200 ease-in hover:bg-blue-600 hover:shadow-xl disabled:bg-blue-300"
-              disabled={!loginId || isError}
+              disabled={!loginId}
             >
               Login
             </button>
           </form>
+
+          {/* Snackbar for success and error messages */}
+          <Snackbar
+            open={snackbar.open}
+            autoHideDuration={4000}
+            onClose={handleSnackbarClose}
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          >
+            <Alert
+              onClose={handleSnackbarClose}
+              severity={snackbar.severity}
+              variant="filled"
+            >
+              {snackbar.message}
+            </Alert>
+          </Snackbar>
         </div>
       </section>
     </main>

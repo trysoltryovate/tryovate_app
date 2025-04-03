@@ -22,7 +22,7 @@ export default function AddCandidates() {
           </Breadcrumbs>
         </section>
 
-        <section className="mb-4">
+        <section className="mb-4 px-2 md:px-3">
           <Alert severity="info">
             The <strong>Add Candidate</strong> wizard guides you through the
             process of adding a new candidate. You have the flexibility to enter

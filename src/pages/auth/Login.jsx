@@ -24,11 +24,11 @@ export default function Login() {
     severity: "success",
   });
 
-  const navigate = useNavigate();
-
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
   };
+
+  const navigate = useNavigate();
 
   const validateLoginId = (e) => {
     setLoginId(e.target.value);
@@ -88,7 +88,14 @@ export default function Login() {
 
       if (res.status === 200) {
         console.log(res.data, "Logged In Successfully!");
-        navigate("/dashboard/home");
+        setSnackbar({
+          open: true,
+          message: "Login Successfull!",
+          severity: "success",
+        });
+        setTimeout(() => {
+          navigate("/dashboard/home");
+        }, 800);
       }
     } catch (error) {
       if (error.response) {

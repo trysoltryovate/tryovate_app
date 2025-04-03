@@ -1,3 +1,4 @@
+import { Alert, Snackbar } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
@@ -48,6 +49,16 @@ export default function AddCandForm() {
     paymentType: "partial",
   });
 
+  const [snackbar, setSnackbar] = React.useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -62,11 +73,22 @@ export default function AddCandForm() {
         formData,
       );
       if (response.status === 201) {
-        navigate("/dashboard/candidates");
+        setTimeout(() => {
+          navigate("/dashboard/candidates");
+        }, 800);
+        setSnackbar({
+          open: true,
+          message: "Candidate Added Successfully!",
+          severity: "success",
+        });
       }
-      console.log("Success with response:", response.data);
     } catch (error) {
       console.error("Error submitting form:", error);
+      setSnackbar({
+        open: true,
+        message: "Something went wrong!",
+        severity: "error",
+      });
     }
   };
 
@@ -293,29 +315,50 @@ export default function AddCandForm() {
   };
 
   return (
-    <Box sx={{ width: "100%" }}>
-      <Stepper activeStep={activeStep} sx={{ marginBottom: 5 }}>
-        {steps.map((label) => (
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
-      {renderFormFields()}
-      <Box
-        sx={{ display: "flex", justifyContent: "space-between", marginTop: 2 }}
-      >
-        <Button
-          disabled={activeStep === 0}
-          onClick={handleBack}
-          variant="outlined"
+    <section className="w-full p-3 md:p-3 lg:p-4">
+      <Box sx={{ width: "100%" }}>
+        <Stepper activeStep={activeStep} sx={{ marginBottom: 5 }}>
+          {steps.map((label) => (
+            <Step key={label}>
+              <StepLabel>{label}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+        {renderFormFields()}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginTop: 2,
+          }}
         >
-          Back
-        </Button>
-        <Button onClick={handleNext} variant="contained">
-          {activeStep === steps.length - 1 ? "Finish" : "Next"}
-        </Button>
+          <Button
+            disabled={activeStep === 0}
+            onClick={handleBack}
+            variant="outlined"
+          >
+            Back
+          </Button>
+          <Button onClick={handleNext} variant="contained">
+            {activeStep === steps.length - 1 ? "Finish" : "Next"}
+          </Button>
+        </Box>
+
+        <Snackbar
+          open={snackbar.open}
+          autoHideDuration={4000}
+          onClose={handleSnackbarClose}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <Alert
+            onClose={handleSnackbarClose}
+            severity={snackbar.severity}
+            variant="filled"
+          >
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
       </Box>
-    </Box>
+    </section>
   );
 }

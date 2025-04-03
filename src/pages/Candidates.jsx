@@ -4,6 +4,7 @@ import {
   CircularProgress,
   Divider,
   Paper,
+  Snackbar,
   Table,
   TableBody,
   TableCell,
@@ -30,6 +31,16 @@ export default function Candidates() {
   const [deletingId, setDeletingId] = useState(null);
 
   const navigate = useNavigate();
+
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -64,11 +75,22 @@ export default function Candidates() {
           prev.filter((candidate) => candidate.id !== id),
         );
         setDeletingId(null);
+
+        setSnackbar({
+          open: true,
+          message: `Successfully deleted user: ${id}`,
+          severity: "success",
+        });
       }, 700);
     } catch (error) {
-      console.error("Error deleting candidate:", error);
+      console.log(error);
       setIsError(true);
       setDeletingId(null);
+      setSnackbar({
+        open: true,
+        message: "Something went wrong, try later!",
+        severity: "error",
+      });
     }
   };
 
@@ -183,6 +205,22 @@ export default function Candidates() {
               </TableBody>
             </Table>
           </TableContainer>
+
+          {/* Snackbar for success and error messages */}
+          <Snackbar
+            open={snackbar.open}
+            autoHideDuration={4000}
+            onClose={handleSnackbarClose}
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          >
+            <Alert
+              onClose={handleSnackbarClose}
+              severity={snackbar.severity}
+              variant="filled"
+            >
+              {snackbar.message}
+            </Alert>
+          </Snackbar>
         </section>
       </main>
     </>

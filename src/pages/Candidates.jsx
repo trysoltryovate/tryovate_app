@@ -3,7 +3,6 @@ import {
   Breadcrumbs,
   CircularProgress,
   Divider,
-  Link,
   Paper,
   Table,
   TableBody,
@@ -18,6 +17,7 @@ import { useEffect, useState } from "react";
 import { FaCircleInfo } from "react-icons/fa6";
 import { MdEdit } from "react-icons/md";
 import { RiDeleteBin5Line } from "react-icons/ri";
+import { Link, useNavigate } from "react-router-dom";
 
 import Loader from "../components/Loader";
 import NotFound from "../components/Not-Found";
@@ -28,6 +28,8 @@ export default function Candidates() {
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -86,7 +88,7 @@ export default function Candidates() {
             <Link
               className="hover:text-blue-500 hover:underline"
               color="inherit"
-              href="/dashboard/home"
+              to="/dashboard/home"
             >
               Dashboard
             </Link>
@@ -152,7 +154,14 @@ export default function Candidates() {
                         {candidate.selectedCourse}
                       </TableCell>
                       <TableCell align="center">
-                        <button className="rounded-md border border-orange-200 bg-orange-100 p-2 text-orange-900 hover:bg-orange-200 hover:shadow-lg">
+                        <button
+                          className="rounded-md border border-orange-200 bg-orange-100 p-2 text-orange-900 hover:bg-orange-200 hover:shadow-lg"
+                          onClick={() =>
+                            navigate(
+                              `/dashboard/candidates/edit-candidate/${candidate?.id}`,
+                            )
+                          }
+                        >
                           <MdEdit />
                         </button>
                       </TableCell>

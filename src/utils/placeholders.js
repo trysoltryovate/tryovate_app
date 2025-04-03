@@ -1,3 +1,27 @@
+export const emptyFormFields = {
+  fullName: "",
+  dob: "",
+  gender: "",
+  contactNumber: "",
+  email: "",
+  currentAddress: "",
+  permanentAddress: "",
+  motherName: "",
+  fatherName: "",
+  alternateNumber: "",
+  aadharCard: "",
+  panCard: "",
+  reference: "",
+  highestDegree: "",
+  universityCollegeName: "",
+  yearOfPassing: null,
+  specializationMajor: "",
+  percentageCgpa: null,
+  longMemo: "",
+  selectedCourse: "",
+  paymentType: "",
+};
+
 export const dummyData = [
   {
     fullName: "John Doe",

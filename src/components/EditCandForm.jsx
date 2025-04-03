@@ -22,31 +22,9 @@ const steps = [
   "Payment Structure",
 ];
 
-export default function AddCandForm() {
+export default function EditCandForm({ candidate }) {
   const [activeStep, setActiveStep] = React.useState(0);
-  const [formData, setFormData] = React.useState({
-    fullName: "krunal",
-    dob: "1998-01-03",
-    gender: "Male",
-    contactNumber: "1364567890",
-    email: "krunal@example.com",
-    currentAddress: "123 Main St, City",
-    permanentAddress: "456 Elm St, Hometown",
-    motherName: "Jane Doe",
-    fatherName: "Richard Doe",
-    alternateNumber: "0987654321",
-    aadharCard: "123456789101",
-    panCard: "ABCDE1234F",
-    reference: "Friend",
-    highestDegree: "degree",
-    universityCollegeName: "JNTU",
-    yearOfPassing: 2022,
-    specializationMajor: "Computer",
-    percentageCgpa: 6.8,
-    longMemo: "Available",
-    selectedCourse: "java",
-    paymentType: "partial",
-  });
+  const [formData, setFormData] = React.useState(candidate);
 
   const navigate = useNavigate();
 
@@ -57,14 +35,14 @@ export default function AddCandForm() {
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.post(
-        import.meta.env.VITE_ADD_EMPLOYEE_API_URL,
+      const response = await axios.put(
+        `${import.meta.env.VITE_UPDATE_EMPLOYEE_API_URL}/${candidate?.id}`,
         formData,
       );
-      if (response.status === 201) {
+
+      if (response?.status === 200) {
         navigate("/dashboard/candidates");
       }
-      console.log("Success with response:", response.data);
     } catch (error) {
       console.error("Error submitting form:", error);
     }

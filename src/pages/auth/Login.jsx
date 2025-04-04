@@ -87,7 +87,6 @@ export default function Login() {
       const res = await axios.post(import.meta.env.VITE_LOGIN_API_URL, user);
 
       if (res.status === 200) {
-        console.log(res.data, "Logged In Successfully!");
         setSnackbar({
           open: true,
           message: "Login Successfull!",

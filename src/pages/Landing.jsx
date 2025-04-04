@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-import Logo from "../assets/logo.png";
+import Logo from "../assets/tryovate_logo_darkMode2.png";
 
 export default function Landing() {
   return (
@@ -12,7 +12,7 @@ export default function Landing() {
               src={Logo}
               alt="tryovate_logo"
               title="Tryovate"
-              className="w-[42px] md:w-[52px] lg:w-[62px]"
+              className="xl mt-4 w-[120px] rounded-full lg:w-[140px]"
             />
           </Link>
 

@@ -21,6 +21,7 @@ import { MdEdit } from "react-icons/md";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { Link, useNavigate } from "react-router-dom";
 
+import ConfirmDeleteDialog from "../components/ConfirmDelete";
 import Loader from "../components/Loader";
 import NotFound from "../components/Not-Found";
 import { tableFields } from "../utils/constants";
@@ -30,6 +31,18 @@ export default function Candidates() {
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
+
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+
+  const handleClickOpen = (id) => {
+    setDeletingId(id);
+    setIsConfirmDialogOpen(true);
+  };
+
+  const handleClose = () => {
+    setIsConfirmDialogOpen(false);
+    setDeletingId(null);
+  };
 
   const navigate = useNavigate();
 
@@ -92,6 +105,8 @@ export default function Candidates() {
         message: "Something went wrong, try later!",
         severity: "error",
       });
+    } finally {
+      setIsConfirmDialogOpen(false);
     }
   };
 
@@ -201,7 +216,7 @@ export default function Candidates() {
                       </TableCell>
                       <TableCell align="center">
                         <button
-                          onClick={() => handleDelete(candidate.id)}
+                          onClick={() => handleClickOpen(candidate?.id)}
                           className="inline-flex items-center justify-center rounded-md border border-red-200 bg-red-100 p-2 font-bold text-red-900 hover:bg-red-200 hover:shadow-lg"
                           disabled={deletingId === candidate.id}
                         >
@@ -217,6 +232,14 @@ export default function Candidates() {
               </TableBody>
             </Table>
           </TableContainer>
+
+          <ConfirmDeleteDialog
+            isConfirmDialogOpen={isConfirmDialogOpen}
+            handleClickOpen={handleClickOpen}
+            handleClose={handleClose}
+            deletingId={deletingId}
+            handleDelete={handleDelete}
+          />
 
           {/* Snackbar for success and error messages */}
           <Snackbar

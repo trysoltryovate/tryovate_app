@@ -82,7 +82,7 @@ export default function EditCandInfo() {
           flexItem
         />
 
-        <EditCandForm candidate={candidate} />
+        <EditCandForm candidate={candidate} candidateId={candidateId} />
       </main>
     </>
   );

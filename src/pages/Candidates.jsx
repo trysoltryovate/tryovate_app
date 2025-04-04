@@ -26,14 +26,22 @@ import Loader from "../components/Loader";
 import NotFound from "../components/Not-Found";
 import { tableFields } from "../utils/constants";
 
+import * as React from "react";
+import TextField from "@mui/material/TextField";
+import Stack from "@mui/material/Stack";
+import Autocomplete from "@mui/material/Autocomplete";
+
 export default function Candidates() {
   const [candidatesData, setCandidatesData] = useState([]);
+  const [filteredCandidates, setFilteredCandidates] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
 
+  //console.log(candidatesData);
   const handleClickOpen = (id) => {
     setDeletingId(id);
     setIsConfirmDialogOpen(true);
@@ -77,6 +85,22 @@ export default function Candidates() {
     fetchData();
   }, []);
 
+  const handleSearch = (event) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+
+    if (!query) {
+      setFilteredCandidates(candidatesData);
+    } else {
+      const filtered = candidatesData.filter((candidate) =>
+        candidate.id.toString().includes(query),
+      );
+
+      console.log("Filtered Results:", filtered); // Debugging output
+      setFilteredCandidates(filtered);
+    }
+  };
+
   const handleDelete = async (id) => {
     setDeletingId(id);
 
@@ -86,6 +110,9 @@ export default function Candidates() {
       );
       setTimeout(() => {
         setCandidatesData((prev) =>
+          prev.filter((candidate) => candidate.id !== id),
+        );
+        setFilteredCandidates((prev) =>
           prev.filter((candidate) => candidate.id !== id),
         );
         setDeletingId(null);
@@ -146,7 +173,14 @@ export default function Candidates() {
           flexItem
         />
 
-        <section className="flex w-full items-center justify-end px-2 md:px-3">
+        <section className="flex w-full items-center justify-between px-2 md:px-3">
+          <TextField
+            label="Search by ID"
+            variant="outlined"
+            size="small"
+            value={searchQuery}
+            onChange={handleSearch}
+          />
           <button
             className="inline-flex items-center justify-center gap-x-1 rounded-lg bg-blue-200 p-2 px-4 text-blue-800 transition-colors duration-200 hover:bg-blue-300 hover:text-blue-900 hover:shadow-lg"
             onClick={() => navigate("/dashboard/candidates/add-candidate")}
@@ -173,8 +207,8 @@ export default function Candidates() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {candidatesData &&
-                  candidatesData.map((candidate, index) => (
+                {(searchQuery ? filteredCandidates : candidatesData).map(
+                  (candidate, index) => (
                     <TableRow
                       key={candidate.id}
                       sx={{
@@ -228,7 +262,8 @@ export default function Candidates() {
                         </button>
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ),
+                )}
               </TableBody>
             </Table>
           </TableContainer>

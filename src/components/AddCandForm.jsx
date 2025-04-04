@@ -73,7 +73,7 @@ export default function AddCandForm() {
         formData,
       );
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         setTimeout(() => {
           navigate("/dashboard/candidates");
         }, 800);

@@ -23,7 +23,7 @@ const steps = [
   "Payment Structure",
 ];
 
-export default function EditCandForm({ candidate }) {
+export default function EditCandForm({ candidate, candidateId }) {
   const [activeStep, setActiveStep] = React.useState(0);
   const [formData, setFormData] = React.useState(candidate);
 
@@ -47,7 +47,7 @@ export default function EditCandForm({ candidate }) {
   const handleSubmit = async () => {
     try {
       const response = await axios.put(
-        `${import.meta.env.VITE_UPDATE_CANDIDATE_API_URL}/${candidate?.id}`,
+        `${import.meta.env.VITE_UPDATE_CANDIDATE_API_URL}/${candidateId}`,
         formData,
       );
 

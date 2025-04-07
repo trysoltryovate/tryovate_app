@@ -121,6 +121,22 @@ export default function AddCandForm() {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
+  const calculateTotalPrice = () => {
+    const selectedCourses = formData.selectedCourse;
+    let total = 0;
+
+    selectedCourses.forEach((courseName) => {
+      const course = coursesList.find(
+        (course) => course.courseName === courseName,
+      );
+      if (course) {
+        total += course.coursePrice;
+      }
+    });
+
+    return total;
+  };
+
   const handleCheckboxChange = (event) => {
     const { value, checked } = event.target;
     setFormData((prev) => {
@@ -460,13 +476,17 @@ export default function AddCandForm() {
                   <small className="font-medium opacity-75">
                     Payment Structure:
                   </small>
-                  <p className="text-sm">{formData?.paymentType}</p>
+                  <p className="text-sm">
+                    {formData?.paymentType ? formData?.paymentType : "-/-"}
+                  </p>
                 </span>
                 <span className="inline-flex w-full items-center justify-between">
                   <small className="font-medium opacity-75">
                     Mode of payment:
                   </small>
-                  <p className="text-sm">{formData?.paymentMode}</p>
+                  <p className="text-sm">
+                    {formData?.paymentMode ? formData?.paymentMode : "-/-"}
+                  </p>
                 </span>
                 <span className="inline-flex w-full items-center justify-between">
                   <small className="font-medium opacity-75">GST:</small>
@@ -478,7 +498,7 @@ export default function AddCandForm() {
                 <div className="inline-flex w-full items-center justify-between">
                   <p className="text-md font-semibold">Price:</p>
 
-                  <strong>Rs. {formatPrice(65000)}</strong>
+                  <strong>Rs. {formatPrice(calculateTotalPrice())}</strong>
                 </div>
 
                 <div className="h-[2px] w-full bg-gray-500" aria-hidden></div>
@@ -489,16 +509,16 @@ export default function AddCandForm() {
                   </p>
 
                   <strong className="text-2xl md:text-3xl">
-                    <small>Rs.</small> {formatPrice(65000)}
+                    <small>Rs.</small> {formatPrice(calculateTotalPrice())}
                   </strong>
                 </div>
 
                 <div
                   onClick={handleNext}
-                  className="mt-3 flex w-full cursor-pointer items-center justify-between rounded-lg bg-blue-500 p-3 py-10 text-white shadow-lg transition-colors duration-200 ease-in hover:bg-blue-600 md:px-4"
+                  className="mt-3 flex w-full cursor-pointer items-center justify-between rounded-lg bg-blue-600 p-3 py-10 text-white shadow-lg transition-colors duration-200 ease-in hover:bg-blue-500 md:px-4"
                 >
                   <p className="text-lg font-semibold md:text-xl">
-                    Continue to checkout
+                    Proceed to Payment
                   </p>
 
                   <span className="block w-max rounded-full bg-white p-2 text-xl text-black">

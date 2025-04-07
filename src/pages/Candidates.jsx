@@ -13,8 +13,12 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import Autocomplete from "@mui/material/Autocomplete";
+import Stack from "@mui/material/Stack";
+import TextField from "@mui/material/TextField";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import * as React from "react";
 import { FaCircleInfo } from "react-icons/fa6";
 import { HiPlus } from "react-icons/hi";
 import { MdEdit } from "react-icons/md";
@@ -25,11 +29,6 @@ import ConfirmDeleteDialog from "../components/ConfirmDelete";
 import Loader from "../components/Loader";
 import NotFound from "../components/Not-Found";
 import { tableFields } from "../utils/constants";
-
-import * as React from "react";
-import TextField from "@mui/material/TextField";
-import Stack from "@mui/material/Stack";
-import Autocomplete from "@mui/material/Autocomplete";
 
 export default function Candidates() {
   const [candidatesData, setCandidatesData] = useState([]);

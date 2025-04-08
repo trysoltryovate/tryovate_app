@@ -234,8 +234,8 @@ export default function Candidates() {
                       </TableCell>
                       <TableCell align="center">
                         <ul>
-                          {candidate.selectedCourses &&
-                            candidate.selectedCourses.map((course, i) => {
+                          {candidate.selectedCourse &&
+                            candidate.selectedCourse.map((course, i) => {
                               return <li key={i}>{course}</li>;
                             })}
                         </ul>

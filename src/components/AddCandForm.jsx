@@ -65,8 +65,6 @@ export default function AddCandForm() {
     remainingAmount: "",
   });
 
-  // console.log(formData);
-
   const [snackbar, setSnackbar] = React.useState({
     open: false,
     message: "",

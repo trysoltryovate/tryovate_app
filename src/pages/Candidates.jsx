@@ -233,7 +233,12 @@ export default function Candidates() {
                         {candidate.yearOfPassing}
                       </TableCell>
                       <TableCell align="center">
-                        {candidate.selectedCourse}
+                        <ul>
+                          {candidate.selectedCourses &&
+                            candidate.selectedCourses.map((course, i) => {
+                              return <li key={i}>{course}</li>;
+                            })}
+                        </ul>
                       </TableCell>
                       <TableCell align="center">
                         <button

@@ -40,7 +40,7 @@ export default function Candidates() {
 
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
 
-  //console.log(candidatesData);
+  console.log(candidatesData);
   const handleClickOpen = (id) => {
     setDeletingId(id);
     setIsConfirmDialogOpen(true);
@@ -84,18 +84,44 @@ export default function Candidates() {
     fetchData();
   }, []);
 
+  // const handleSearch = (event) => {
+  //   const query = event.target.value;
+  //   setSearchQuery(query);
+
+  //   if (!query) {
+  //     setFilteredCandidates(candidatesData);
+  //   } else {
+  //     const filtered = candidatesData.filter(
+  //       (candidate) =>
+  //         candidate.id.toString().includes(query) ||
+  //         candidate.fullName.includes(query) ||
+  //         candidate.selectedCourse.some((each) => each.includes(query)),
+  //     );
+
+  //     console.log("Filtered Results:", filtered); // Debugging output
+  //     setFilteredCandidates(filtered);
+  //   }
+  // };
   const handleSearch = (event) => {
-    const query = event.target.value;
+    const query = event.target.value.toLowerCase();
     setSearchQuery(query);
 
     if (!query) {
       setFilteredCandidates(candidatesData);
     } else {
-      const filtered = candidatesData.filter((candidate) =>
-        candidate.id.toString().includes(query),
-      );
+      const filtered = candidatesData.filter((candidate) => {
+        const idMatch = candidate.id.toString().includes(query);
+        const nameMatch = candidate.fullName?.toLowerCase().includes(query);
+        const courseMatch = Array.isArray(candidate.selectedCourse)
+          ? candidate.selectedCourse.some((each) =>
+              each?.toLowerCase().includes(query),
+            )
+          : false;
 
-      console.log("Filtered Results:", filtered); // Debugging output
+        return idMatch || nameMatch || courseMatch;
+      });
+
+      //console.log("Filtered Results:", filtered);
       setFilteredCandidates(filtered);
     }
   };
@@ -174,11 +200,12 @@ export default function Candidates() {
 
         <section className="flex w-full items-center justify-between px-2 md:px-3">
           <TextField
-            label="Search by ID"
+            label="Search by ID or Name or Course"
             variant="outlined"
             size="small"
             value={searchQuery}
             onChange={handleSearch}
+            className="w-[260px]"
           />
           <button
             className="inline-flex items-center justify-center gap-x-1 rounded-lg bg-blue-200 p-2 px-4 text-blue-800 transition-colors duration-200 hover:bg-blue-300 hover:text-blue-900 hover:shadow-lg"

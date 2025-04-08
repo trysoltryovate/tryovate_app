@@ -36,7 +36,7 @@ const steps = [
 ];
 
 export default function AddCandForm() {
-  const [activeStep, setActiveStep] = React.useState(2);
+  const [activeStep, setActiveStep] = React.useState(0);
   const [formData, setFormData] = React.useState({
     fullName: "krunal",
     dob: "1998-01-03",
@@ -58,12 +58,14 @@ export default function AddCandForm() {
     percentageCgpa: 6.8,
     longMemo: "Available",
     selectedCourse: [],
-    partialAmount: 0,
+    partialPaidAmount: 0,
     paymentType: "",
     paymentMode: "",
+    totalPayableAmount: 0,
+    remainingAmount: "",
   });
 
-  console.log(formData);
+  // console.log(formData);
 
   const [snackbar, setSnackbar] = React.useState({
     open: false,
@@ -71,14 +73,49 @@ export default function AddCandForm() {
     severity: "success",
   });
 
+  React.useEffect(() => {
+    let total = calculateTotalPrice();
+    const partial = parseFloat(formData.partialPaidAmount) || 0;
+    const remaining = total - partial;
+
+    if (formData.paymentMode === "Online") {
+      total = calculateTotalPrice() * 0.18 + total;
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      totalPayableAmount: total,
+      remainingAmount: remaining,
+    }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    formData.selectedCourse,
+    formData.partialPaidAmount,
+    formData.paymentMode,
+  ]);
+
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
   };
 
   const navigate = useNavigate();
 
+  const handlePartialAmtChange = (e) => {
+    const partial = parseFloat(e.target.value);
+
+    setFormData((prev) => {
+      const remaining = prev.totalPayableAmount - partial;
+      return {
+        ...prev,
+        partialPaidAmount: partial,
+        remainingAmount: remaining,
+      };
+    });
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -139,13 +176,26 @@ export default function AddCandForm() {
 
   const handleCheckboxChange = (event) => {
     const { value, checked } = event.target;
+
     setFormData((prev) => {
       const selected = prev.selectedCourse || [];
+      const updatedSelected = checked
+        ? [...selected, value]
+        : selected.filter((item) => item !== value);
+
+      const newTotal = updatedSelected.reduce((acc, courseName) => {
+        const course = coursesList.find((c) => c.courseName === courseName);
+        return acc + (course?.coursePrice || 0);
+      }, 0);
+
+      const partial = parseFloat(prev.partialPaidAmount) || 0;
+      const remaining = newTotal - partial;
+
       return {
         ...prev,
-        selectedCourse: checked
-          ? [...selected, value]
-          : selected.filter((item) => item !== value),
+        selectedCourse: updatedSelected,
+        totalPayableAmount: newTotal,
+        remainingAmount: remaining > 0 ? remaining : 0,
       };
     });
   };
@@ -428,10 +478,10 @@ export default function AddCandForm() {
                   {formData?.paymentType === "Partial Payment" && (
                     <TextField
                       label="Partial Amount To Be Paid"
-                      name="partialAmount"
+                      name="partialPaidAmount"
                       type="number"
-                      value={formData.partialAmount}
-                      onChange={handleChange}
+                      value={formData?.partialPaidAmount}
+                      onChange={(e) => handlePartialAmtChange(e)}
                       margin="dense"
                     />
                   )}
@@ -491,7 +541,7 @@ export default function AddCandForm() {
                 <span className="inline-flex w-full items-center justify-between">
                   <small className="font-medium opacity-75">GST:</small>
                   <p className="text-sm">
-                    {formData?.paymentMode === "Online" ? "12%" : "NA"}
+                    {formData?.paymentMode === "Online" ? "18%" : "NA"}
                   </p>
                 </span>
 
@@ -499,6 +549,18 @@ export default function AddCandForm() {
                   <p className="text-md font-semibold">Price:</p>
 
                   <strong>Rs. {formatPrice(calculateTotalPrice())}</strong>
+                </div>
+
+                <div className="inline-flex w-full items-center justify-between">
+                  <p className="text-md font-semibold">Remaining Amount:</p>
+
+                  <strong
+                    className={`${formData.paymentType === "Partial Payment" ? "text-red-500" : "text-gray-500"}`}
+                  >
+                    {formData.paymentType === "Partial Payment"
+                      ? `Rs. ${formatPrice(formData?.remainingAmount)}`
+                      : "NA"}
+                  </strong>
                 </div>
 
                 <div className="h-[2px] w-full bg-gray-500" aria-hidden></div>
@@ -509,7 +571,12 @@ export default function AddCandForm() {
                   </p>
 
                   <strong className="text-2xl md:text-3xl">
-                    <small>Rs.</small> {formatPrice(calculateTotalPrice())}
+                    <small>Rs.</small>{" "}
+                    {formData?.paymentMode === "Online"
+                      ? formatPrice(
+                          calculateTotalPrice() * 0.18 + calculateTotalPrice(),
+                        )
+                      : formatPrice(calculateTotalPrice())}
                   </strong>
                 </div>
 
@@ -531,26 +598,14 @@ export default function AddCandForm() {
         );
       case 3:
         return (
-          <FormControl margin="dense">
-            <FormLabel>Payment Structure</FormLabel>
-            <RadioGroup
-              row
-              name="paymentType"
-              value={formData.paymentType}
-              onChange={handleChange}
+          <div className="flex w-full items-center justify-center p-2 md:p-4 lg:p-6">
+            <button
+              className="rounded-lg border border-green-500 bg-green-200 px-4 py-2 text-green-800"
+              onClick={handleNext}
             >
-              <FormControlLabel
-                value="Full Payment"
-                control={<Radio />}
-                label="Full Payment"
-              />
-              <FormControlLabel
-                value="Partial Payment"
-                control={<Radio />}
-                label="Partial Payment"
-              />
-            </RadioGroup>
-          </FormControl>
+              Add Candidate
+            </button>
+          </div>
         );
       default:
         return null;

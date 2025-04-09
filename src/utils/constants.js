@@ -8,6 +8,7 @@ export const formatPrice = (price) => {
 
 // Candidates List Table Fields...
 export const tableFields = [
+  "Select Candidate",
   "Candidate Id",
   "Candidate Name",
   "Date Of Birth",

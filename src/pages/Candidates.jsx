@@ -5,6 +5,7 @@ import {
   Divider,
   Paper,
   Snackbar,
+  Checkbox,
   Table,
   TableBody,
   TableCell,
@@ -22,6 +23,7 @@ import * as React from "react";
 import { FaCircleInfo } from "react-icons/fa6";
 import { HiPlus } from "react-icons/hi";
 import { MdEdit } from "react-icons/md";
+import { MdOutlineFileDownload } from "react-icons/md";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -29,6 +31,7 @@ import ConfirmDeleteDialog from "../components/ConfirmDelete";
 import Loader from "../components/Loader";
 import NotFound from "../components/Not-Found";
 import { tableFields } from "../utils/constants";
+import * as XLSX from "xlsx";
 
 export default function Candidates() {
   const [candidatesData, setCandidatesData] = useState([]);
@@ -39,8 +42,52 @@ export default function Candidates() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const [selectedCandidates, setSelectedCandidates] = useState([]);
+  const [selectAll, setSelectAll] = useState(false);
 
-  console.log(candidatesData);
+  //console.log(selectedCandidates);
+
+  useEffect(() => {
+    const allIds = (searchQuery ? filteredCandidates : candidatesData).map(
+      (c) => c.id,
+    );
+    setSelectAll(
+      allIds.length > 0 &&
+        allIds.every((id) => selectedCandidates.includes(id)),
+    );
+  }, [selectedCandidates, candidatesData, filteredCandidates, searchQuery]);
+
+  const handleExport = () => {
+    const candidatesToExport = candidatesData.filter((candidate) =>
+      selectedCandidates.includes(candidate.id),
+    );
+
+    const formattedData = candidatesToExport.map((candidate) => {
+      const allDetails = { ...candidate };
+
+      // Convert arrays and objects to strings for Excel compatibility
+      Object.keys(allDetails).forEach((key) => {
+        if (Array.isArray(allDetails[key])) {
+          allDetails[key] = allDetails[key].join(", ");
+        } else if (
+          typeof allDetails[key] === "object" &&
+          allDetails[key] !== null
+        ) {
+          allDetails[key] = JSON.stringify(allDetails[key]);
+        }
+      });
+
+      return allDetails;
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(formattedData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Candidates");
+
+    XLSX.writeFile(workbook, "Selected_Candidates.xlsx");
+  };
+
+  //console.log(candidatesData);
   const handleClickOpen = (id) => {
     setDeletingId(id);
     setIsConfirmDialogOpen(true);
@@ -84,24 +131,6 @@ export default function Candidates() {
     fetchData();
   }, []);
 
-  // const handleSearch = (event) => {
-  //   const query = event.target.value;
-  //   setSearchQuery(query);
-
-  //   if (!query) {
-  //     setFilteredCandidates(candidatesData);
-  //   } else {
-  //     const filtered = candidatesData.filter(
-  //       (candidate) =>
-  //         candidate.id.toString().includes(query) ||
-  //         candidate.fullName.includes(query) ||
-  //         candidate.selectedCourse.some((each) => each.includes(query)),
-  //     );
-
-  //     console.log("Filtered Results:", filtered); // Debugging output
-  //     setFilteredCandidates(filtered);
-  //   }
-  // };
   const handleSearch = (event) => {
     const query = event.target.value.toLowerCase();
     setSearchQuery(query);
@@ -207,12 +236,22 @@ export default function Candidates() {
             onChange={handleSearch}
             className="w-[260px]"
           />
-          <button
-            className="inline-flex items-center justify-center gap-x-1 rounded-lg bg-blue-200 p-2 px-4 text-blue-800 transition-colors duration-200 hover:bg-blue-300 hover:text-blue-900 hover:shadow-lg"
-            onClick={() => navigate("/dashboard/candidates/add-candidate")}
-          >
-            Add Candidate <HiPlus size={20} />
-          </button>
+          <div>
+            <button
+              className="mr-2 inline-flex items-center justify-center gap-x-1 rounded-lg bg-blue-200 p-2 px-4 text-blue-800 transition-colors duration-200 hover:bg-blue-300 hover:text-blue-900 hover:shadow-lg"
+              onClick={() => navigate("/dashboard/candidates/add-candidate")}
+            >
+              <HiPlus size={20} /> Add Candidate
+            </button>
+
+            <button
+              className="ml-2 inline-flex items-center justify-center gap-x-1 rounded-lg bg-green-200 p-2 px-4 text-green-800 transition-colors duration-200 hover:bg-green-300 hover:text-green-900 hover:shadow-lg"
+              onClick={handleExport}
+              disabled={selectedCandidates.length === 0}
+            >
+              <MdOutlineFileDownload size={20} /> Export
+            </button>
+          </div>
         </section>
 
         <section className="p-2 md:p-3 lg:p-4">
@@ -220,18 +259,58 @@ export default function Candidates() {
             <Table>
               <TableHead>
                 <TableRow className="bg-gray-100">
-                  {tableFields &&
-                    tableFields.map((field, index) => (
-                      <TableCell
-                        key={index}
-                        align="center"
-                        sx={{ fontWeight: "bold", border: "1px solid #ddd" }}
-                      >
-                        {field}
-                      </TableCell>
-                    ))}
+                  {tableFields.map((field, index) => (
+                    <TableCell
+                      key={index}
+                      align="center"
+                      sx={{ fontWeight: "bold", border: "1px solid #ddd" }}
+                      className={index === 0 ? "border-l" : ""}
+                    >
+                      {index === 0 ? (
+                        <div className="flex items-center justify-between">
+                          <Checkbox
+                            onChange={(e) => {
+                              const isChecked = e.target.checked;
+                              const data = searchQuery
+                                ? filteredCandidates
+                                : candidatesData;
+                              if (isChecked) {
+                                const allIds = data.map((c) => c.id);
+                                setSelectedCandidates(allIds);
+                              } else {
+                                setSelectedCandidates([]);
+                              }
+                            }}
+                            checked={
+                              (searchQuery
+                                ? filteredCandidates
+                                : candidatesData
+                              ).length > 0 &&
+                              selectedCandidates.length ===
+                                (searchQuery
+                                  ? filteredCandidates
+                                  : candidatesData
+                                ).length
+                            }
+                            indeterminate={
+                              selectedCandidates.length > 0 &&
+                              selectedCandidates.length <
+                                (searchQuery
+                                  ? filteredCandidates
+                                  : candidatesData
+                                ).length
+                            }
+                          />
+                          <span>{field}</span>
+                        </div>
+                      ) : (
+                        field
+                      )}
+                    </TableCell>
+                  ))}
                 </TableRow>
               </TableHead>
+
               <TableBody>
                 {(searchQuery ? filteredCandidates : candidatesData).map(
                   (candidate, index) => (
@@ -244,6 +323,19 @@ export default function Candidates() {
                         },
                       }}
                     >
+                      <TableCell align="center" className="border-l">
+                        <Checkbox
+                          checked={selectedCandidates.includes(candidate.id)}
+                          onChange={(e) => {
+                            const checked = e.target.checked;
+                            setSelectedCandidates((prev) =>
+                              checked
+                                ? [...prev, candidate.id]
+                                : prev.filter((id) => id !== candidate.id),
+                            );
+                          }}
+                        />
+                      </TableCell>
                       <TableCell align="center" className="border-l">
                         {candidate?.id}
                       </TableCell>

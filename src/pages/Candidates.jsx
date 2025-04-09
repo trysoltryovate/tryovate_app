@@ -1,11 +1,11 @@
 import {
   Alert,
   Breadcrumbs,
+  Checkbox,
   CircularProgress,
   Divider,
   Paper,
   Snackbar,
-  Checkbox,
   Table,
   TableBody,
   TableCell,
@@ -26,12 +26,12 @@ import { MdEdit } from "react-icons/md";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { Link, useNavigate } from "react-router-dom";
+import * as XLSX from "xlsx";
 
 import ConfirmDeleteDialog from "../components/ConfirmDelete";
 import Loader from "../components/Loader";
 import NotFound from "../components/Not-Found";
 import { tableFields } from "../utils/constants";
-import * as XLSX from "xlsx";
 
 export default function Candidates() {
   const [candidatesData, setCandidatesData] = useState([]);
@@ -44,8 +44,6 @@ export default function Candidates() {
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [selectedCandidates, setSelectedCandidates] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
-
-  //console.log(selectedCandidates);
 
   useEffect(() => {
     const allIds = (searchQuery ? filteredCandidates : candidatesData).map(
@@ -227,18 +225,18 @@ export default function Candidates() {
           flexItem
         />
 
-        <section className="flex w-full items-center justify-between px-2 md:px-3">
+        <section className="flex w-full flex-wrap items-center justify-between gap-2 px-2 md:justify-between md:px-3">
           <TextField
             label="Search by ID or Name or Course"
             variant="outlined"
             size="small"
             value={searchQuery}
             onChange={handleSearch}
-            className="w-[260px]"
+            className="w-full md:w-[260px]"
           />
-          <div>
+          <div className="flex w-full items-center justify-between md:w-max md:justify-center">
             <button
-              className="mr-2 inline-flex items-center justify-center gap-x-1 rounded-lg bg-blue-200 p-2 px-4 text-blue-800 transition-colors duration-200 hover:bg-blue-300 hover:text-blue-900 hover:shadow-lg"
+              className="inline-flex items-center justify-center gap-x-1 rounded-lg bg-blue-200 p-2 px-4 text-blue-800 transition-colors duration-200 hover:bg-blue-300 hover:text-blue-900 hover:shadow-lg"
               onClick={() => navigate("/dashboard/candidates/add-candidate")}
             >
               <HiPlus size={20} /> Add Candidate
@@ -267,44 +265,39 @@ export default function Candidates() {
                       className={index === 0 ? "border-l" : ""}
                     >
                       {index === 0 ? (
-                        <div className="flex items-center justify-between">
-                          <Checkbox
-                            onChange={(e) => {
-                              const isChecked = e.target.checked;
-                              const data = searchQuery
-                                ? filteredCandidates
-                                : candidatesData;
-                              if (isChecked) {
-                                const allIds = data.map((c) => c.id);
-                                setSelectedCandidates(allIds);
-                              } else {
-                                setSelectedCandidates([]);
-                              }
-                            }}
-                            checked={
+                        <Checkbox
+                          onChange={(e) => {
+                            const isChecked = e.target.checked;
+                            const data = searchQuery
+                              ? filteredCandidates
+                              : candidatesData;
+                            if (isChecked) {
+                              const allIds = data.map((c) => c.id);
+                              setSelectedCandidates(allIds);
+                            } else {
+                              setSelectedCandidates([]);
+                            }
+                          }}
+                          checked={
+                            (searchQuery ? filteredCandidates : candidatesData)
+                              .length > 0 &&
+                            selectedCandidates.length ===
                               (searchQuery
                                 ? filteredCandidates
                                 : candidatesData
-                              ).length > 0 &&
-                              selectedCandidates.length ===
-                                (searchQuery
-                                  ? filteredCandidates
-                                  : candidatesData
-                                ).length
-                            }
-                            indeterminate={
-                              selectedCandidates.length > 0 &&
-                              selectedCandidates.length <
-                                (searchQuery
-                                  ? filteredCandidates
-                                  : candidatesData
-                                ).length
-                            }
-                          />
-                          <span>{field}</span>
-                        </div>
+                              ).length
+                          }
+                          indeterminate={
+                            selectedCandidates.length > 0 &&
+                            selectedCandidates.length <
+                              (searchQuery
+                                ? filteredCandidates
+                                : candidatesData
+                              ).length
+                          }
+                        />
                       ) : (
-                        field
+                        <span>{field}</span>
                       )}
                     </TableCell>
                   ))}

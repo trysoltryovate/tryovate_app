@@ -73,7 +73,7 @@ export default function AddCandForm() {
 
   React.useEffect(() => {
     let total = calculateTotalPrice();
-    const partial = parseFloat(formData.partialPaidAmount) || 0;
+    const partial = parseFloat(formData.partialPaidAmount);
     const remaining = total - partial;
 
     if (formData.paymentMode === "Online") {
@@ -98,27 +98,13 @@ export default function AddCandForm() {
 
   const navigate = useNavigate();
 
-  // const handlePartialAmtChange = (e) => {
-  //   const partial = parseFloat(e.target.value);
-
-  //   setFormData((prev) => {
-  //     const remaining = prev.totalPayableAmount - partial;
-  //     // const remaining = prev.calculateTotalPrice - partialPaidAmount;
-
-  //     return {
-  //       ...prev,
-  //       partialPaidAmount: partial,
-  //       remainingAmount: remaining,
-  //     };
-  //   });
-  // };
   const handlePartialAmtChange = (e) => {
-    const partial = parseFloat(e.target.value) || 0;
+    const partial = parseFloat(e.target.value);
 
     setFormData((prev) => {
       const total =
         prev.paymentMode === "Online"
-          ? prev.totalPayableAmount * 1.18
+          ? prev.totalPayableAmount + prev.totalPayableAmount * 0.18
           : prev.totalPayableAmount;
 
       const remaining = total - partial;
@@ -581,10 +567,11 @@ export default function AddCandForm() {
                   >
                     {formData.paymentType === "Partial Payment"
                       ? `Rs. ${formatPrice(
-                          (formData.paymentMode === "Online"
-                            ? calculateTotalPrice() * 1.18
-                            : calculateTotalPrice()) -
-                            (formData.partialPaidAmount ?? 0),
+                          calculateTotalPrice() +
+                            (formData.paymentMode === "Online"
+                              ? calculateTotalPrice() * 0.18
+                              : 0) -
+                            (formData.partialPaidAmount ?? 0) || 0,
                         )}`
                       : "NA"}
                   </strong>
@@ -599,9 +586,11 @@ export default function AddCandForm() {
 
                   <strong className="text-2xl md:text-3xl">
                     <small>Rs.</small>{" "}
-                    {formData?.paymentMode === "Online"
-                      ? formatPrice(calculateTotalPrice() * 1.18)
-                      : formatPrice(calculateTotalPrice())}
+                    {formatPrice(
+                      formData?.paymentMode === "Online"
+                        ? calculateTotalPrice() + calculateTotalPrice() * 0.18
+                        : calculateTotalPrice(),
+                    )}
                   </strong>
                 </div>
 

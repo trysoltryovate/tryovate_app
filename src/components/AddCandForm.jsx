@@ -73,7 +73,7 @@ export default function AddCandForm() {
 
   React.useEffect(() => {
     let total = calculateTotalPrice();
-    const partial = parseFloat(formData.partialPaidAmount) || 0;
+    const partial = parseFloat(formData.partialPaidAmount);
     const remaining = total - partial;
 
     if (formData.paymentMode === "Online") {
@@ -102,7 +102,13 @@ export default function AddCandForm() {
     const partial = parseFloat(e.target.value);
 
     setFormData((prev) => {
-      const remaining = prev.totalPayableAmount - partial;
+      const total =
+        prev.paymentMode === "Online"
+          ? prev.totalPayableAmount + prev.totalPayableAmount * 0.18
+          : prev.totalPayableAmount;
+
+      const remaining = total - partial;
+
       return {
         ...prev,
         partialPaidAmount: partial,
@@ -553,10 +559,20 @@ export default function AddCandForm() {
                   <p className="text-md font-semibold">Remaining Amount:</p>
 
                   <strong
-                    className={`${formData.paymentType === "Partial Payment" ? "text-red-500" : "text-gray-500"}`}
+                    className={`${
+                      formData.paymentType === "Partial Payment"
+                        ? "text-red-500"
+                        : "text-gray-500"
+                    }`}
                   >
                     {formData.paymentType === "Partial Payment"
-                      ? `Rs. ${formatPrice(formData?.remainingAmount)}`
+                      ? `Rs. ${formatPrice(
+                          calculateTotalPrice() +
+                            (formData.paymentMode === "Online"
+                              ? calculateTotalPrice() * 0.18
+                              : 0) -
+                            (formData.partialPaidAmount ?? 0) || 0,
+                        )}`
                       : "NA"}
                   </strong>
                 </div>
@@ -570,11 +586,11 @@ export default function AddCandForm() {
 
                   <strong className="text-2xl md:text-3xl">
                     <small>Rs.</small>{" "}
-                    {formData?.paymentMode === "Online"
-                      ? formatPrice(
-                          calculateTotalPrice() * 0.18 + calculateTotalPrice(),
-                        )
-                      : formatPrice(calculateTotalPrice())}
+                    {formatPrice(
+                      formData?.paymentMode === "Online"
+                        ? calculateTotalPrice() + calculateTotalPrice() * 0.18
+                        : calculateTotalPrice(),
+                    )}
                   </strong>
                 </div>
 

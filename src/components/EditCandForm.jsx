@@ -47,24 +47,27 @@ export default function EditCandForm({ candidate, candidateId }) {
 
   React.useEffect(() => {
     let total = calculateTotalPrice();
-    const partial = parseFloat(formData.partialPaidAmount);
-    const remaining = total - partial;
+    const partial = parseFloat(formData.partialPaidAmount) || 0;
 
+    // Add GST if payment mode is Online
     if (formData.paymentMode === "Online") {
-      total = calculateTotalPrice() * 0.18 + total;
+      total += total * 0.18; // Correctly add GST to the total
     }
+
+    // Set remaining amount based on payment type
+    const remaining =
+      formData.paymentType === "Full Payment" ? 0 : total - partial;
 
     setFormData((prev) => ({
       ...prev,
       totalPayableAmount: total,
       remainingAmount: remaining,
     }));
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     formData.selectedCourse,
     formData.partialPaidAmount,
     formData.paymentMode,
+    formData.paymentType, // Ensure this is included
   ]);
 
   const handleSnackbarClose = () => {
@@ -74,13 +77,15 @@ export default function EditCandForm({ candidate, candidateId }) {
   const navigate = useNavigate();
 
   const handlePartialAmtChange = (e) => {
-    const partial = parseFloat(e.target.value);
+    const partial = parseFloat(e.target.value) || 0;
 
     setFormData((prev) => {
-      const total =
-        prev.paymentMode === "Online"
-          ? prev.totalPayableAmount + prev.totalPayableAmount * 0.18
-          : prev.totalPayableAmount;
+      let total = calculateTotalPrice();
+
+      // Add GST if payment mode is Online
+      if (prev.paymentMode === "Online") {
+        total += total * 0.18; // Correctly add GST to the total
+      }
 
       const remaining = total - partial;
 
@@ -100,28 +105,57 @@ export default function EditCandForm({ candidate, candidateId }) {
 
   const handleSubmit = async () => {
     try {
+      // Calculate the total amount based on selected courses
+      let totalAmount = calculateTotalPrice();
+
+      // If payment mode is Online, add GST
+      if (formData.paymentMode === "Online") {
+        totalAmount += totalAmount * 0.18; // Adding 18% GST
+      }
+
+      // Prepare the data to submit
+      const dataToSubmit = {
+        ...formData,
+        totalPayableAmount: totalAmount, // Ensure totalPayableAmount includes GST
+        remainingAmount:
+          formData.paymentType === "Full Payment"
+            ? 0
+            : totalAmount - (formData.partialPaidAmount || 0), // Calculate remaining amount
+      };
+
+      console.log("Data to submit:", dataToSubmit); // Log the data being submitted
+
       const response = await axios.put(
         `${import.meta.env.VITE_UPDATE_CANDIDATE_API_URL}/${candidateId}`,
-        formData,
+        dataToSubmit,
       );
 
-      if (response?.status === 200) {
+      if (response.status === 200) {
         setTimeout(() => {
           navigate("/dashboard/candidates");
         }, 800);
         setSnackbar({
           open: true,
-          message: "Candidate updated successfully!",
+          message: "Candidate Updated Successfully!",
           severity: "success",
         });
       }
     } catch (error) {
-      console.error("Error submitting form:", error.message);
-      setSnackbar({
-        open: true,
-        message: error?.message,
-        severity: "error",
-      });
+      if (error.response) {
+        console.error("Error submitting form:", error.response.data);
+        setSnackbar({
+          open: true,
+          message: error.response.data.message || "Something went wrong!",
+          severity: "error",
+        });
+      } else {
+        console.error("Error:", error.message);
+        setSnackbar({
+          open: true,
+          message: "An unexpected error occurred.",
+          severity: "error",
+        });
+      }
     }
   };
 
@@ -141,7 +175,8 @@ export default function EditCandForm({ candidate, candidateId }) {
     const selectedCourses = formData.selectedCourse;
     let total = 0;
 
-    selectedCourses &&
+    // Check if selectedCourses is an array
+    if (Array.isArray(selectedCourses)) {
       selectedCourses.forEach((courseName) => {
         const course = coursesList.find(
           (course) => course.courseName === courseName,
@@ -150,6 +185,7 @@ export default function EditCandForm({ candidate, candidateId }) {
           total += course.coursePrice;
         }
       });
+    }
 
     return total;
   };
@@ -535,7 +571,11 @@ export default function EditCandForm({ candidate, candidateId }) {
                   <p className="text-md font-semibold">Remaining Amount:</p>
 
                   <strong
-                    className={`${formData.paymentType === "Partial Payment" ? "text-red-500" : "text-gray-500"}`}
+                    className={`${
+                      formData.paymentType === "Partial Payment"
+                        ? "text-red-500"
+                        : "text-gray-500"
+                    }`}
                   >
                     {formData.paymentType === "Partial Payment"
                       ? `Rs. ${formatPrice(

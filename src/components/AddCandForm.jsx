@@ -70,64 +70,58 @@ export default function AddCandForm() {
     message: "",
     severity: "success",
   });
+  console.log(formData);
 
   React.useEffect(() => {
     let total = calculateTotalPrice();
-    const partial = parseFloat(formData.partialPaidAmount);
-    const remaining = total - partial;
+    const partial = parseFloat(formData.partialPaidAmount) || 0;
 
+    // Add GST if payment mode is Online
     if (formData.paymentMode === "Online") {
-      total = calculateTotalPrice() * 0.18 + total;
+      total += total * 0.18; // Correctly add GST to the total
     }
+
+    // Set remaining amount based on payment type
+    const remaining =
+      formData.paymentType === "Full Payment" ? 0 : total - partial;
 
     setFormData((prev) => ({
       ...prev,
       totalPayableAmount: total,
       remainingAmount: remaining,
     }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     formData.selectedCourse,
     formData.partialPaidAmount,
     formData.paymentMode,
+    formData.paymentType, // Ensure this is included
   ]);
-
-  const handleSnackbarClose = () => {
-    setSnackbar({ ...snackbar, open: false });
-  };
-
-  const navigate = useNavigate();
-
-  const handlePartialAmtChange = (e) => {
-    const partial = parseFloat(e.target.value);
-
-    setFormData((prev) => {
-      const total =
-        prev.paymentMode === "Online"
-          ? prev.totalPayableAmount + prev.totalPayableAmount * 0.18
-          : prev.totalPayableAmount;
-
-      const remaining = total - partial;
-
-      return {
-        ...prev,
-        partialPaidAmount: partial,
-        remainingAmount: remaining,
-      };
-    });
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
 
   const handleSubmit = async () => {
     try {
+      // Calculate the total amount based on selected courses
+      let totalAmount = calculateTotalPrice();
+
+      // If payment mode is Online, add GST
+      if (formData.paymentMode === "Online") {
+        totalAmount += totalAmount * 0.18; // Adding 18% GST
+      }
+
+      // Prepare the data to submit
+      const dataToSubmit = {
+        ...formData,
+        totalPayableAmount: totalAmount, // Ensure totalPayableAmount includes GST
+        remainingAmount:
+          formData.paymentType === "Full Payment"
+            ? 0
+            : totalAmount - (formData.partialPaidAmount || 0), // Calculate remaining amount
+      };
+
+      console.log("Data to submit:", dataToSubmit); // Log the data being submitted
+
       const response = await axios.post(
         import.meta.env.VITE_ADD_CANDIDATE_API_URL,
-        formData,
+        dataToSubmit,
       );
 
       if (response.status === 201) {
@@ -150,16 +144,37 @@ export default function AddCandForm() {
     }
   };
 
-  const handleNext = () => {
-    if (activeStep === steps.length - 1) {
-      handleSubmit();
-    } else {
-      setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    }
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  const navigate = useNavigate();
+
+  const handlePartialAmtChange = (e) => {
+    const partial = parseFloat(e.target.value);
+
+    setFormData((prev) => {
+      let total = calculateTotalPrice();
+
+      // Add GST if payment mode is Online
+      if (prev.paymentMode === "Online") {
+        total += total * 0.18; // Correctly add GST to the total
+      }
+
+      const remaining = total - partial;
+
+      return {
+        ...prev,
+        partialPaidAmount: partial,
+        remainingAmount: remaining,
+      };
+    });
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const calculateTotalPrice = () => {
@@ -177,6 +192,17 @@ export default function AddCandForm() {
 
     return total;
   };
+  const handleNext = () => {
+    if (activeStep === steps.length - 1) {
+      handleSubmit();
+    } else {
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    }
+  };
+
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
 
   const handleCheckboxChange = (event) => {
     const { value, checked } = event.target;
@@ -192,7 +218,7 @@ export default function AddCandForm() {
         return acc + (course?.coursePrice || 0);
       }, 0);
 
-      const partial = parseFloat(prev.partialPaidAmount) || 0;
+      const partial = parseFloat(prev.partialPaidAmount);
       const remaining = newTotal - partial;
 
       return {
@@ -557,23 +583,12 @@ export default function AddCandForm() {
 
                 <div className="inline-flex w-full items-center justify-between">
                   <p className="text-md font-semibold">Remaining Amount:</p>
-
                   <strong
-                    className={`${
-                      formData.paymentType === "Partial Payment"
-                        ? "text-red-500"
-                        : "text-gray-500"
-                    }`}
+                    className={`${formData.paymentType === "Partial Payment" ? "text-red-500" : "text-gray-500"}`}
                   >
-                    {formData.paymentType === "Partial Payment"
-                      ? `Rs. ${formatPrice(
-                          calculateTotalPrice() +
-                            (formData.paymentMode === "Online"
-                              ? calculateTotalPrice() * 0.18
-                              : 0) -
-                            (formData.partialPaidAmount ?? 0) || 0,
-                        )}`
-                      : "NA"}
+                    {formData.paymentType === "Full Payment"
+                      ? "Rs. 0"
+                      : `Rs. ${formatPrice(formData.remainingAmount)}`}
                   </strong>
                 </div>
 

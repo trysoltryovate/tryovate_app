@@ -247,7 +247,7 @@ export default function Candidates() {
               onClick={handleExport}
               disabled={selectedCandidates.length === 0}
             >
-              <MdOutlineFileDownload size={20} /> Export
+              <MdOutlineFileDownload size={20} /> Download
             </button>
           </div>
         </section>

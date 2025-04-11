@@ -25,6 +25,8 @@ import { HiPlus } from "react-icons/hi";
 import { MdEdit } from "react-icons/md";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { RiDeleteBin5Line } from "react-icons/ri";
+import { FaSort } from "react-icons/fa";
+
 import { Link, useNavigate } from "react-router-dom";
 import * as XLSX from "xlsx";
 
@@ -44,16 +46,50 @@ export default function Candidates() {
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [selectedCandidates, setSelectedCandidates] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
+  const [sortOrder, setSortOrder] = useState("asc"); // "asc" for ascending, "desc" for descending
 
   useEffect(() => {
-    const allIds = (searchQuery ? filteredCandidates : candidatesData).map(
-      (c) => c.id,
-    );
-    setSelectAll(
-      allIds.length > 0 &&
-        allIds.every((id) => selectedCandidates.includes(id)),
-    );
-  }, [selectedCandidates, candidatesData, filteredCandidates, searchQuery]);
+    const fetchData = async () => {
+      setIsLoading(true);
+
+      try {
+        const res = await axios.get(
+          import.meta.env.VITE_GET_ALL_CANDIDATE_API_URL,
+        );
+        const dta = res.data;
+
+        // Sort the candidates after fetching
+        const sortedData = dta.sort((a, b) => Number(a.id) - Number(b.id));
+        setCandidatesData(sortedData);
+        setFilteredCandidates(sortedData); // Also set filtered candidates to the sorted data
+      } catch (error) {
+        setIsError(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const sortCandidates = () => {
+    const candidatesToSort = searchQuery ? filteredCandidates : candidatesData;
+
+    const sortedCandidates = [...candidatesToSort].sort((a, b) => {
+      return sortOrder === "asc"
+        ? Number(b.id) - Number(a.id)
+        : Number(a.id) - Number(b.id);
+    });
+
+    if (searchQuery) {
+      setFilteredCandidates(sortedCandidates);
+    } else {
+      setCandidatesData(sortedCandidates);
+    }
+
+    // Toggle the sort order
+    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+  };
 
   const handleExport = () => {
     const candidatesToExport = candidatesData.filter((candidate) =>
@@ -107,27 +143,6 @@ export default function Candidates() {
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-
-      try {
-        const res = await axios.get(
-          import.meta.env.VITE_GET_ALL_CANDIDATE_API_URL,
-        );
-        const dta = res.data;
-
-        setCandidatesData(dta);
-      } catch (error) {
-        setIsError(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   const handleSearch = (event) => {
     const query = event.target.value.toLowerCase();
@@ -243,11 +258,12 @@ export default function Candidates() {
             </button>
 
             <button
-              className="ml-2 inline-flex items-center justify-center gap-x-1 rounded-lg bg-green-200 p-2 px-4 text-green-800 transition-colors duration-200 hover:bg-green-300 hover:text-green-900 hover:shadow-lg"
+              className="ml-2 inline-flex items-center justify-center gap-x-1 rounded-lg bg-green-200 p-2 px-4 text-green-800 transition-colors duration-200 hover:cursor-pointer hover:bg-green-300 hover:text-green-900 hover:shadow-lg"
               onClick={handleExport}
               disabled={selectedCandidates.length === 0}
             >
-              <MdOutlineFileDownload size={20} /> Download
+              <MdOutlineFileDownload size={20} />
+              Download
             </button>
           </div>
         </section>
@@ -256,12 +272,16 @@ export default function Candidates() {
           <TableContainer component={Paper} sx={{ borderRadius: "8px" }}>
             <Table>
               <TableHead>
-                <TableRow className="bg-gray-100">
+                <TableRow className="bg-blue-800">
                   {tableFields.map((field, index) => (
                     <TableCell
                       key={index}
                       align="center"
-                      sx={{ fontWeight: "bold", border: "1px solid #ddd" }}
+                      sx={{
+                        fontWeight: "bold",
+                        border: "1px solid #ddd",
+                        color: "#ffffff",
+                      }}
                       className={index === 0 ? "border-l" : ""}
                     >
                       {index === 0 ? (
@@ -296,6 +316,17 @@ export default function Candidates() {
                               ).length
                           }
                         />
+                      ) : index === 1 ? (
+                        <>
+                          <div
+                            className="flex h-12 items-center justify-between hover:cursor-pointer"
+                            onClick={sortCandidates}
+                          >
+                            {field}
+
+                            <FaSort size={16} />
+                          </div>
+                        </>
                       ) : (
                         <span>{field}</span>
                       )}

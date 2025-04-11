@@ -332,44 +332,127 @@ export default function EditCandForm({ candidate, candidateId }) {
         );
       case 1:
         return (
-          <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-4">
-            <TextField
-              label="Highest Degree"
-              name="highestDegree"
-              value={formData.highestDegree}
-              onChange={handleChange}
-              margin="dense"
-            />
-            <TextField
-              label="University/College Name"
-              name="universityCollegeName"
-              value={formData.universityCollegeName}
-              onChange={handleChange}
-              margin="dense"
-            />
-            <TextField
-              label="Year of Passing"
-              name="yearOfPassing"
-              type="number"
-              value={formData.yearOfPassing}
-              onChange={handleChange}
-              margin="dense"
-            />
-            <TextField
-              label="Specialization/Major"
-              name="specializationMajor"
-              value={formData.specializationMajor}
-              onChange={handleChange}
-              margin="dense"
-            />
-            <TextField
-              label="Percentage/CGPA"
-              name="percentageCgpa"
-              type="number"
-              value={formData.percentageCgpa}
-              onChange={handleChange}
-              margin="dense"
-            />
+          // <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-4">
+          //   <TextField
+          //     label="Highest Degree"
+          //     name="highestDegree"
+          //     value={formData.highestDegree}
+          //     onChange={handleChange}
+          //     margin="dense"
+          //   />
+          //   <TextField
+          //     label="University/College Name"
+          //     name="universityCollegeName"
+          //     value={formData.universityCollegeName}
+          //     onChange={handleChange}
+          //     margin="dense"
+          //   />
+          //   <TextField
+          //     label="Year of Passing"
+          //     name="yearOfPassing"
+          //     type="number"
+          //     value={formData.yearOfPassing}
+          //     onChange={handleChange}
+          //     margin="dense"
+          //   />
+          //   <TextField
+          //     label="Specialization/Major"
+          //     name="specializationMajor"
+          //     value={formData.specializationMajor}
+          //     onChange={handleChange}
+          //     margin="dense"
+          //   />
+          //   <TextField
+          //     label="Percentage/CGPA"
+          //     name="percentageCgpa"
+          //     type="number"
+          //     value={formData.percentageCgpa}
+          //     onChange={handleChange}
+          //     margin="dense"
+          //   />
+          // </div>
+
+          <div>
+            <h1 className="text-2xl font-semibold">Graduation</h1>
+            <div className="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-4">
+              <TextField
+                label=" Degree"
+                name="degree"
+                value={formData.degree}
+                onChange={handleChange}
+                margin="dense"
+              />
+              <TextField
+                label="University/College Name"
+                name="universityCollegeName"
+                value={formData.universityCollegeName}
+                onChange={handleChange}
+                margin="dense"
+              />
+              <TextField
+                label="Year of Passing"
+                name="yearOfPassing"
+                type="number"
+                value={formData.yearOfPassing}
+                onChange={handleChange}
+                margin="dense"
+              />
+              <TextField
+                label="Specialization/Major"
+                name="specializationMajor"
+                value={formData.specializationMajor}
+                onChange={handleChange}
+                margin="dense"
+              />
+              <TextField
+                label="Percentage/CGPA"
+                name="percentageCgpa"
+                type="number"
+                value={formData.percentageCgpa}
+                onChange={handleChange}
+                margin="dense"
+              />
+            </div>
+            <h1 className="mt-4 text-xl font-semibold">Post Graduation</h1>
+            <div className="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-4">
+              <TextField
+                label="Highest Degree"
+                name="highestDegree"
+                value={formData.highestDegree}
+                onChange={handleChange}
+                margin="dense"
+              />
+              <TextField
+                label=" PG University/College Name"
+                name="pgUniversityCollegeName"
+                value={formData.pgUniversityCollegeName}
+                onChange={handleChange}
+                margin="dense"
+              />
+              <TextField
+                label=" PG Year of Passing"
+                name="pgYearOfPassing"
+                type="number"
+                value={formData.pgYearOfPassing}
+                onChange={handleChange}
+                margin="dense"
+              />
+              <TextField
+                label=" PG Specialization/Major"
+                name="pgSpecializationMajor"
+                value={formData.pgSpecializationMajor}
+                onChange={handleChange}
+                margin="dense"
+              />
+              <TextField
+                label="PG Percentage/CGPA"
+                name="pgPercentageCgpa"
+                type="number"
+                value={formData.pgPercentageCgpa}
+                onChange={handleChange}
+                margin="dense"
+              />
+            </div>
           </div>
         );
       case 2:

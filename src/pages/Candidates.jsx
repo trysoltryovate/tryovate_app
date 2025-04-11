@@ -286,6 +286,12 @@ export default function Candidates() {
                     >
                       {index === 0 ? (
                         <Checkbox
+                          sx={{
+                            color: "#ffffff",
+                            "&.Mui-checked": {
+                              color: "#ffffff",
+                            },
+                          }}
                           onChange={(e) => {
                             const isChecked = e.target.checked;
                             const data = searchQuery
@@ -369,12 +375,19 @@ export default function Candidates() {
                         {candidate.contactNumber}
                       </TableCell>
                       <TableCell align="center">{candidate.email}</TableCell>
+                      <TableCell align="center">{candidate.degree}</TableCell>
+                      <TableCell align="center">
+                        {candidate.yearOfPassing}
+                      </TableCell>
                       <TableCell align="center">
                         {candidate.highestDegree}
                       </TableCell>
                       <TableCell align="center">
-                        {candidate.yearOfPassing}
+                        {candidate.pgYearOfPassing}
                       </TableCell>
+                      {/* <TableCell align="center">
+                        {candidate.experienceGap}
+                      </TableCell> */}
                       <TableCell align="center">
                         <ul>
                           {candidate.selectedCourse &&
@@ -408,6 +421,7 @@ export default function Candidates() {
                           )}
                         </button>
                       </TableCell>
+                      <TableCell>{candidate.batchId}</TableCell>
                     </TableRow>
                   ),
                 )}

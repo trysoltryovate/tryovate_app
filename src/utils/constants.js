@@ -1,3 +1,13 @@
+export function gapFromGraduationYear(graduationYear) {
+  const currentYear = new Date().getFullYear();
+  const gap = currentYear - graduationYear;
+  return `${gap} years`;
+}
+
+// Example usage
+// const gap = gapFromGraduationYear(2018);
+// console.log(gap); // Output (in 2025): "7 years"
+
 // Format price to Indian Rupee...
 export const formatPrice = (price) => {
   return new Intl.NumberFormat("en-IN", {
@@ -14,11 +24,15 @@ export const tableFields = [
   "Date Of Birth",
   "Phone No",
   "Email",
-  "Qualification",
+  "Graduation",
+  "Year Of Passing",
+  "Post Graduation",
   "Year Of Passing",
   "Course",
   "Edit",
   "Delete",
+  "Batch Id",
+  "Year Gap",
 ];
 
 // Offering Courses List...

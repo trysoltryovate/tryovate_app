@@ -21,12 +21,16 @@ import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Stepper from "@mui/material/Stepper";
 import TextField from "@mui/material/TextField";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
 import axios from "axios";
 import * as React from "react";
 import { IoMdArrowRoundForward } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 
 import { coursesList, formatPrice } from "../utils/constants";
+import Candidates from "../pages/Candidates";
 
 const steps = [
   "Personal Details",
@@ -37,6 +41,7 @@ const steps = [
 
 export default function AddCandForm() {
   const [activeStep, setActiveStep] = React.useState(0);
+
   const [formData, setFormData] = React.useState({
     fullName: "krunal",
     dob: "1998-01-03",
@@ -51,19 +56,31 @@ export default function AddCandForm() {
     aadharCard: "123456789101",
     panCard: "ABCDE1234F",
     reference: "Friend",
-    highestDegree: "degree",
-    universityCollegeName: "JNTU",
-    yearOfPassing: 2022,
-    specializationMajor: "Computer",
+    degree: "Degree",
+    universityCollegeName: "SVIT",
+    yearOfPassing: 2020,
+    specializationMajor: "BSC",
     percentageCgpa: 6.8,
+    highestDegree: "PG",
+    pgUniversityCollegeName: "JNTU gfgf",
+    pgYearOfPassing: 2022,
+    pgSpecializationMajor: "Computer",
+    pgPercentageCgpa: 6.8,
     longMemo: "Available",
     selectedCourse: [],
-    partialPaidAmount: 0,
+    batchId: "",
     paymentType: "",
     paymentMode: "",
+    partialPaidAmount: 0,
     totalPayableAmount: 0,
     remainingAmount: "",
   });
+
+  const handleBatchId = (event) => {
+    setFormData((prev) => {
+      return { ...prev, batchId: event.target.value };
+    });
+  };
 
   const [snackbar, setSnackbar] = React.useState({
     open: false,
@@ -346,44 +363,87 @@ export default function AddCandForm() {
         );
       case 1:
         return (
-          <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-4">
-            <TextField
-              label="Highest Degree"
-              name="highestDegree"
-              value={formData.highestDegree}
-              onChange={handleChange}
-              margin="dense"
-            />
-            <TextField
-              label="University/College Name"
-              name="universityCollegeName"
-              value={formData.universityCollegeName}
-              onChange={handleChange}
-              margin="dense"
-            />
-            <TextField
-              label="Year of Passing"
-              name="yearOfPassing"
-              type="number"
-              value={formData.yearOfPassing}
-              onChange={handleChange}
-              margin="dense"
-            />
-            <TextField
-              label="Specialization/Major"
-              name="specializationMajor"
-              value={formData.specializationMajor}
-              onChange={handleChange}
-              margin="dense"
-            />
-            <TextField
-              label="Percentage/CGPA"
-              name="percentageCgpa"
-              type="number"
-              value={formData.percentageCgpa}
-              onChange={handleChange}
-              margin="dense"
-            />
+          <div>
+            <h1 className="text-2xl font-semibold">Graduation</h1>
+            <div className="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-4">
+              <TextField
+                label=" Degree"
+                name="degree"
+                value={formData.degree}
+                onChange={handleChange}
+                margin="dense"
+              />
+              <TextField
+                label="University/College Name"
+                name="universityCollegeName"
+                value={formData.universityCollegeName}
+                onChange={handleChange}
+                margin="dense"
+              />
+              <TextField
+                label="Year of Passing"
+                name="yearOfPassing"
+                type="number"
+                value={formData.yearOfPassing}
+                onChange={handleChange}
+                margin="dense"
+              />
+              <TextField
+                label="Specialization/Major"
+                name="specializationMajor"
+                value={formData.specializationMajor}
+                onChange={handleChange}
+                margin="dense"
+              />
+              <TextField
+                label="Percentage/CGPA"
+                name="percentageCgpa"
+                type="number"
+                value={formData.percentageCgpa}
+                onChange={handleChange}
+                margin="dense"
+              />
+            </div>
+            <h1 className="mt-4 text-xl font-semibold">Post Graduation</h1>
+            <div className="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-4">
+              <TextField
+                label="Highest Degree"
+                name="highestDegree"
+                value={formData.highestDegree}
+                onChange={handleChange}
+                margin="dense"
+              />
+              <TextField
+                label=" PG University/College Name"
+                name="pgUniversityCollegeName"
+                value={formData.pgUniversityCollegeName}
+                onChange={handleChange}
+                margin="dense"
+              />
+              <TextField
+                label=" PG Year of Passing"
+                name="pgYearOfPassing"
+                type="number"
+                value={formData.pgYearOfPassing}
+                onChange={handleChange}
+                margin="dense"
+              />
+              <TextField
+                label=" PG Specialization/Major"
+                name="pgSpecializationMajor"
+                value={formData.pgSpecializationMajor}
+                onChange={handleChange}
+                margin="dense"
+              />
+              <TextField
+                label="PG Percentage/CGPA"
+                name="pgPercentageCgpa"
+                type="number"
+                value={formData.pgPercentageCgpa}
+                onChange={handleChange}
+                margin="dense"
+              />
+            </div>
           </div>
         );
       case 2:
@@ -484,6 +544,24 @@ export default function AddCandForm() {
 
               {formData?.selectedCourse.length > 0 && (
                 <div className="flex flex-col gap-y-1">
+                  <Box sx={{ minWidth: 120 }}>
+                    <FormControl fullWidth>
+                      <InputLabel id="demo-simple-select-label">
+                        Batch Id
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={formData.batchId}
+                        label="Batch Id"
+                        onChange={handleBatchId}
+                      >
+                        <MenuItem value="A1">A1</MenuItem>
+                        <MenuItem value="B1">B1</MenuItem>
+                        <MenuItem value="C1">C1</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Box>
                   <FormControl margin="dense">
                     <FormLabel>Payment Structure</FormLabel>
                     <RadioGroup

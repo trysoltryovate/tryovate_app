@@ -1,7 +1,7 @@
 export function gapFromGraduationYear(graduationYear) {
   const currentYear = new Date().getFullYear();
   const gap = currentYear - graduationYear;
-  return `${gap} years`;
+  return `${gap}`;
 }
 
 // Example usage
@@ -29,10 +29,10 @@ export const tableFields = [
   "Post Graduation",
   "Year Of Passing",
   "Course",
-  "Edit",
-  "Delete",
   "Batch Id",
   "Year Gap",
+  "Edit",
+  "Delete",
 ];
 
 // Offering Courses List...

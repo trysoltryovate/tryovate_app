@@ -34,6 +34,7 @@ import ConfirmDeleteDialog from "../components/ConfirmDelete";
 import Loader from "../components/Loader";
 import NotFound from "../components/Not-Found";
 import { tableFields } from "../utils/constants";
+import { gapFromGraduationYear } from "../utils/constants";
 
 export default function Candidates() {
   const [candidatesData, setCandidatesData] = useState([]);
@@ -396,6 +397,10 @@ export default function Candidates() {
                             })}
                         </ul>
                       </TableCell>
+                      <TableCell align="center">{candidate.batchId}</TableCell>
+                      <TableCell align="center">
+                        {gapFromGraduationYear(candidate.yearOfPassing)}
+                      </TableCell>
                       <TableCell align="center">
                         <button
                           className="rounded-md border border-orange-200 bg-orange-100 p-2 text-orange-900 hover:bg-orange-200 hover:shadow-lg"
@@ -421,7 +426,6 @@ export default function Candidates() {
                           )}
                         </button>
                       </TableCell>
-                      <TableCell>{candidate.batchId}</TableCell>
                     </TableRow>
                   ),
                 )}

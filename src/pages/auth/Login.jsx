@@ -243,6 +243,13 @@ export default function Login() {
                   {passwordError}
                 </p>
               )}
+
+              <h2
+                className="cursor-pointer text-right text-blue-500 hover:underline"
+                onClick={() => navigate("/forgotpassword")}
+              >
+                Forgot Password?
+              </h2>
             </div>
 
             {/* Submit Button */}

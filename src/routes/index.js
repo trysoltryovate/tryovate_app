@@ -2,7 +2,7 @@ import { lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
 
 import LazyLoad from "../components/LazyLoader";
-
+const ForgotPassword = lazy(() => import("../pages/auth/ForgotPassword"));
 const Landing = lazy(() => import("../pages/Landing"));
 const Login = lazy(() => import("../pages/auth/Login"));
 const Home = lazy(() => import("../pages/dashboard/Home"));
@@ -20,6 +20,10 @@ export const router = createBrowserRouter([
   {
     path: "/login",
     element: LazyLoad(Login),
+  },
+  {
+    path: "/forgotpassword",
+    element: LazyLoad(ForgotPassword),
   },
   {
     path: "/dashboard",

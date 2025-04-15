@@ -385,9 +385,7 @@ export default function Candidates() {
                       <TableCell align="center">
                         {candidate.pgYearOfPassing}
                       </TableCell>
-                      {/* <TableCell align="center">
-                        {candidate.experienceGap}
-                      </TableCell> */}
+
                       <TableCell align="center">
                         <ul>
                           {candidate.selectedCourse &&

@@ -31,6 +31,10 @@ import { useNavigate } from "react-router-dom";
 
 import { coursesList, formatPrice } from "../utils/constants";
 import Candidates from "../pages/Candidates";
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
+import html2canvas from "html2canvas";
+import Logo from "../assets/tryovate_logo_darkMode2.png";
 
 const steps = [
   "Personal Details",
@@ -87,7 +91,7 @@ export default function AddCandForm() {
     message: "",
     severity: "success",
   });
-  console.log(formData);
+  //console.log(formData);
 
   React.useEffect(() => {
     let total = calculateTotalPrice();
@@ -113,6 +117,390 @@ export default function AddCandForm() {
     formData.paymentMode,
     formData.paymentType, // Ensure this is included
   ]);
+
+  // const downloadSummaryAsPDF = () => {
+  //   const doc = new jsPDF();
+
+  //   const summaryContent = `
+  //     Courses Selected: ${formData.selectedCourse.length}
+  //     Payment Structure: ${formData.paymentType}
+  //     Mode of payment: ${formData.paymentMode || "-/-"}
+  //     GST: ${formData.paymentMode === "Online" ? "18%" : "NA"}
+  //     Price: Rs. ${formatPrice(calculateTotalPrice())}
+  //     Remaining Amount: Rs. ${formData.paymentType === "Full Payment" ? "0" : formatPrice(formData.remainingAmount)}
+  //     Subtotal: Rs. ${formatPrice(
+  //       formData.paymentMode === "Online"
+  //         ? calculateTotalPrice() + calculateTotalPrice() * 0.18
+  //         : calculateTotalPrice(),
+  //     )}
+  //   `;
+
+  //   doc.text(summaryContent, 10, 10);
+  //   doc.save("summary.pdf");
+  // }
+
+  // const downloadSummaryAsPDF = () => {
+  //   const doc = new jsPDF();
+  //   const startX = 20;
+  //   let startY = 20;
+  //   const lineHeight = 10;
+
+  //   // Convert selected course names to comma-separated (or list format)
+  //   const selectedCourses =
+  //     formData.selectedCourse.length > 0
+  //       ? formData.selectedCourse.join(", ")
+  //       : "None";
+
+  //   const data = [
+  //     ["Courses Selected", selectedCourses],
+  //     ["Payment Structure", formData.paymentType],
+  //     ["Mode of Payment", formData.paymentMode || "-/-"],
+  //     ["GST", formData.paymentMode === "Online" ? "18%" : "NA"],
+  //     ["Price", `Rs. ${formatPrice(calculateTotalPrice())}`],
+  //     [
+  //       "Remaining Amount",
+  //       `Rs. ${formData.paymentType === "Full Payment" ? "0" : formatPrice(formData.remainingAmount)}`,
+  //     ],
+  //     [
+  //       "Subtotal",
+  //       `Rs. ${
+  //         formData.paymentMode === "Online"
+  //           ? formatPrice(calculateTotalPrice() + calculateTotalPrice() * 0.18)
+  //           : formatPrice(calculateTotalPrice())
+  //       }`,
+  //     ],
+  //   ];
+
+  //   // Header
+  //   doc.setFont("helvetica", "bold");
+  //   doc.text("Description", startX, startY);
+  //   doc.text("Details", startX + 90, startY);
+  //   doc.setFont("helvetica", "normal");
+
+  //   startY += 5;
+
+  //   // Divider
+  //   doc.line(startX, startY, startX + 170, startY);
+  //   startY += 5;
+
+  //   // Table Body
+  //   data.forEach(([desc, detail]) => {
+  //     // Wrap text if needed (basic line splitting for long details)
+  //     const detailLines = doc.splitTextToSize(detail.toString(), 90);
+  //     doc.text(desc.toString(), startX, startY);
+  //     doc.text(detailLines, startX + 90, startY);
+  //     startY += detailLines.length * lineHeight;
+  //   });
+
+  //   doc.save("summary.pdf");
+  // };
+
+  // const downloadSummaryAsPDF = () => {
+  //   const doc = new jsPDF();
+  //   const startX = 20;
+  //   let startY = 20;
+  //   const lineHeight = 10;
+
+  //   // Convert selected course names to comma-separated (or list format)
+  //   const selectedCourses =
+  //     formData.selectedCourse.length > 0
+  //       ? formData.selectedCourse.join(", ")
+  //       : "None";
+
+  //   const data = [
+  //     ["Courses Selected", selectedCourses],
+  //     ["Payment Structure", formData.paymentType],
+  //     ["Mode of Payment", formData.paymentMode || "-/-"],
+  //     ["GST", formData.paymentMode === "Online" ? "18%" : "NA"],
+  //     ["Price", `Rs. ${formatPrice(calculateTotalPrice())}`],
+  //     [
+  //       "Remaining Amount",
+  //       `Rs. ${formData.paymentType === "Full Payment" ? "0" : formatPrice(formData.remainingAmount)}`,
+  //     ],
+  //     [
+  //       "Subtotal",
+  //       `Rs. ${
+  //         formData.paymentMode === "Online"
+  //           ? formatPrice(calculateTotalPrice() + calculateTotalPrice() * 0.18)
+  //           : formatPrice(calculateTotalPrice())
+  //       }`,
+  //     ],
+  //   ];
+
+  //   // Header
+  //   doc.setFont("helvetica", "bold");
+  //   doc.text("Description", startX, startY);
+  //   doc.text("Details", startX + 90, startY);
+  //   doc.setFont("helvetica", "normal");
+
+  //   startY += 5;
+
+  //   // Divider
+  //   doc.line(startX, startY, startX + 170, startY);
+  //   startY += 5;
+
+  //   // Table Body
+  //   data.forEach(([desc, detail]) => {
+  //     // Wrap text if needed (basic line splitting for long details)
+  //     const detailLines = doc.splitTextToSize(detail.toString(), 90);
+  //     doc.text(desc.toString(), startX, startY);
+  //     doc.text(detailLines, startX + 90, startY);
+  //     startY += detailLines.length * lineHeight;
+  //   });
+
+  //   doc.save("summary.pdf");
+  // };
+
+  // const downloadSummaryAsPDF = () => {
+  //   const doc = new jsPDF();
+  //   const startX = 20;
+  //   let startY = 20;
+  //   const lineHeight = 10;
+
+  //   const selectedCourses =
+  //     formData.selectedCourse.length > 0
+  //       ? formData.selectedCourse.join(", ")
+  //       : "None";
+
+  //   const price = calculateTotalPrice();
+  //   const gstIncluded = formData.paymentMode === "Online";
+  //   const subtotal = gstIncluded ? price + price * 0.18 : price;
+
+  //   const isPartial = formData.paymentType === "Partial Payment";
+  //   const remainingAmount = isPartial ? formData.remainingAmount : 0;
+  //   const paidAmount = isPartial ? price - remainingAmount : price;
+
+  //   const data = [
+  //     ["Courses Selected", selectedCourses],
+  //     ["Payment Structure", formData.paymentType],
+  //     ["Mode of Payment", formData.paymentMode || "-/-"],
+  //     ["GST", gstIncluded ? "18%" : "NA"],
+  //     ["Price", `Rs. ${formatPrice(price)}`],
+  //   ];
+
+  //   // If partial, add paid and remaining
+  //   if (isPartial) {
+  //     data.push(["Paid Amount", `Rs. ${formatPrice(paidAmount)}`]);
+  //     data.push(["Remaining Amount", `Rs. ${formatPrice(remainingAmount)}`]);
+  //   }
+
+  //   data.push(["Subtotal", `Rs. ${formatPrice(subtotal)}`]);
+
+  //   // Header
+  //   doc.setFont("helvetica", "bold");
+  //   doc.setTextColor(0, 0, 0);
+  //   doc.text("Description", startX, startY);
+  //   doc.text("Details", startX + 90, startY);
+  //   doc.setFont("helvetica", "normal");
+
+  //   startY += 5;
+  //   doc.line(startX, startY, startX + 170, startY);
+  //   startY += 5;
+
+  //   data.forEach(([desc, detail]) => {
+  //     if (desc === "Subtotal") {
+  //       doc.setFont("helvetica", "bold");
+  //       doc.setTextColor(0, 0, 0);
+  //     } else if (desc === "Remaining Amount") {
+  //       doc.setFont("helvetica", "normal");
+  //       doc.setTextColor(255, 0, 0); // Red
+  //     } else {
+  //       doc.setFont("helvetica", "normal");
+  //       doc.setTextColor(0, 0, 0);
+  //     }
+
+  //     const detailLines = doc.splitTextToSize(detail.toString(), 90);
+
+  //     doc.text(desc.toString(), startX, startY);
+  //     doc.text(detailLines, startX + 90, startY);
+
+  //     startY += detailLines.length * lineHeight;
+  //   });
+
+  //   doc.save("summary.pdf");
+  // };
+
+  // const downloadSummaryAsPDF = () => {
+  //   const doc = new jsPDF();
+  //   const startX = 20;
+  //   let startY = 20;
+  //   const lineHeight = 10;
+
+  //   const selectedCourses =
+  //     formData.selectedCourse.length > 0
+  //       ? formData.selectedCourse.join(", ")
+  //       : "None";
+
+  //   const price = calculateTotalPrice();
+  //   const gstIncluded = formData.paymentMode === "Online";
+  //   const subtotal = gstIncluded ? price + price * 0.18 : price;
+
+  //   const isPartial = formData.paymentType === "Partial Payment";
+
+  //   const data = [
+  //     ["Courses Selected", selectedCourses],
+  //     ["Payment Structure", formData.paymentType],
+  //     ["Mode of Payment", formData.paymentMode || "-/-"],
+  //     ["GST", gstIncluded ? "18%" : "NA"],
+  //     ["Price", `Rs. ${formatPrice(price)}`],
+  //   ];
+
+  //   // Show only the partial input field data if payment type is Partial Payment
+  //   if (isPartial) {
+  //     data.push([
+  //       "Paid Amount",
+  //       `Rs. ${formatPrice(formData.partialPaidAmount || 0)}`,
+  //     ]);
+  //     data.push([
+  //       "Remaining Amount",
+  //       `Rs. ${formatPrice(formData.remainingAmount || 0)}`,
+  //     ]);
+  //   }
+
+  //   data.push(["Subtotal", `Rs. ${formatPrice(subtotal)}`]);
+
+  //   // Header
+  //   doc.setFont("helvetica", "bold");
+  //   doc.setTextColor(0, 0, 0);
+  //   doc.text("Description", startX, startY);
+  //   doc.text("Details", startX + 90, startY);
+  //   doc.setFont("helvetica", "normal");
+
+  //   startY += 5;
+  //   doc.line(startX, startY, startX + 170, startY);
+  //   startY += 5;
+
+  //   data.forEach(([desc, detail]) => {
+  //     if (desc === "Subtotal") {
+  //       doc.setFont("helvetica", "bold");
+  //       doc.setTextColor(0, 0, 0);
+  //     } else if (desc === "Remaining Amount") {
+  //       doc.setFont("helvetica", "normal");
+  //       doc.setTextColor(255, 0, 0); // Red
+  //     } else {
+  //       doc.setFont("helvetica", "normal");
+  //       doc.setTextColor(0, 0, 0);
+  //     }
+
+  //     const detailLines = doc.splitTextToSize(detail.toString(), 90);
+
+  //     doc.text(desc.toString(), startX, startY);
+  //     doc.text(detailLines, startX + 90, startY);
+
+  //     startY += detailLines.length * lineHeight;
+  //   });
+
+  //   doc.save("summary.pdf");
+  // };
+
+  const downloadSummaryAsPDF = () => {
+    const doc = new jsPDF();
+    const startX = 20;
+    let startY = 20;
+    const lineHeight = 10;
+    const logoWidth = 50; // Adjust as needed
+    const logoHeight = 40; // Adjust as needed
+
+    // Add blue background
+    doc.setFillColor(6, 34, 110); // Blue Color
+    doc.rect(0, 0, doc.internal.pageSize.getWidth(), 30, "F"); // Background Rectangle
+
+    // Add Logo
+    doc.addImage(
+      Logo,
+      "PNG",
+      (doc.internal.pageSize.getWidth() - logoWidth) / 2,
+      -5,
+      logoWidth,
+      logoHeight,
+    ); // Centered Logo
+
+    const selectedCourses =
+      formData.selectedCourse.length > 0
+        ? formData.selectedCourse.join(", ")
+        : "None";
+
+    const price = calculateTotalPrice();
+    const gstIncluded = formData.paymentMode === "Online";
+    const subtotal = gstIncluded ? price + price * 0.18 : price;
+
+    const isPartial = formData.paymentType === "Partial Payment";
+
+    const data = [
+      ["Courses Selected", selectedCourses],
+      ["Payment Structure", formData.paymentType],
+      ["Mode of Payment", formData.paymentMode || "-/-"],
+      ["GST", gstIncluded ? "18%" : "NA"],
+      ["Price", `Rs. ${formatPrice(price)}`],
+    ];
+
+    if (isPartial) {
+      data.push([
+        "Paid Amount",
+        `Rs. ${formatPrice(formData.partialPaidAmount || 0)}`,
+      ]);
+      data.push([
+        "Remaining Amount",
+        `Rs. ${formatPrice(formData.remainingAmount || 0)}`,
+      ]);
+    }
+
+    data.push(["Subtotal", `Rs. ${formatPrice(subtotal)}`]);
+
+    // Header
+    startY += 30; // Move down after the logo and background
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(0, 0, 0);
+    doc.text("Description", startX, startY);
+    doc.text("Details", startX + 90, startY);
+    doc.setFont("helvetica", "normal");
+
+    startY += 5;
+    doc.line(startX, startY, startX + 170, startY);
+    startY += 5;
+
+    data.forEach(([desc, detail]) => {
+      if (desc === "Subtotal") {
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(0, 0, 0);
+      } else if (desc === "Remaining Amount") {
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(255, 0, 0); // Red
+      } else {
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(0, 0, 0);
+      }
+
+      const detailLines = doc.splitTextToSize(detail.toString(), 90);
+      doc.text(desc.toString(), startX, startY);
+      doc.text(detailLines, startX + 90, startY);
+      startY += detailLines.length * lineHeight;
+    });
+    startY += 5;
+    doc.line(startX, startY, startX + 170, startY);
+    startY += 5;
+    // Add Contact Information
+    startY += 10; // Add some space before the contact info
+    doc.setFont("helvetica", "bold");
+    doc.text("Our Address", startX, startY);
+    startY += lineHeight; // Move down after the header
+    doc.setFont("helvetica", "normal");
+    const address =
+      "6th floor, 2-48/5/6, Vaishnavi's Cynosure, Gachibowli Rd, Opp. RTTC, Telecom Nagar Extension, Gachibowli, Hyderabad, Telangana 500032";
+    const email = "E-mail: info@tryovate.com";
+    const mobile = "Mobile: +91 99083 87005";
+    const phone = "Phone: +91 8247430735";
+    const hours = "Hours of Operation: Monday - Friday: 09.00 - 18.00";
+
+    const contactInfo = [address, email, mobile, phone, hours];
+    contactInfo.forEach((line) => {
+      const contactLines = doc.splitTextToSize(line, 170);
+      doc.text(contactLines, startX, startY);
+      startY += contactLines.length * lineHeight;
+    });
+
+    doc.save("summary.pdf");
+  };
 
   const handleSubmit = async () => {
     try {
@@ -621,7 +1009,17 @@ export default function AddCandForm() {
             </div>
             {/* Checkout Details */}
             <div className="h-auto w-full rounded-xl border border-gray-300 bg-gray-100 p-3 md:p-4 lg:p-5">
-              <h5 className="text-lg font-semibold md:text-xl">Summary</h5>
+              {/* Header Row with Flexbox */}
+              <div className="mb-2 flex items-center justify-between">
+                <h5 className="text-lg font-semibold md:text-xl">Summary</h5>
+                <Button
+                  onClick={downloadSummaryAsPDF}
+                  variant="contained"
+                  color="primary"
+                >
+                  Print Summary
+                </Button>
+              </div>
 
               <div className="mt-3 flex w-full flex-col items-start justify-center gap-y-2 md:mt-5">
                 <span className="inline-flex w-full items-center justify-between">
@@ -630,6 +1028,7 @@ export default function AddCandForm() {
                   </small>
                   <p className="text-sm">{formData?.selectedCourse?.length}</p>
                 </span>
+
                 <span className="inline-flex w-full items-center justify-between">
                   <small className="font-medium opacity-75">
                     Payment Structure:
@@ -638,6 +1037,7 @@ export default function AddCandForm() {
                     {formData?.paymentType ? formData?.paymentType : "-/-"}
                   </p>
                 </span>
+
                 <span className="inline-flex w-full items-center justify-between">
                   <small className="font-medium opacity-75">
                     Mode of payment:
@@ -646,6 +1046,7 @@ export default function AddCandForm() {
                     {formData?.paymentMode ? formData?.paymentMode : "-/-"}
                   </p>
                 </span>
+
                 <span className="inline-flex w-full items-center justify-between">
                   <small className="font-medium opacity-75">GST:</small>
                   <p className="text-sm">
@@ -655,14 +1056,17 @@ export default function AddCandForm() {
 
                 <div className="inline-flex w-full items-center justify-between">
                   <p className="text-md font-semibold">Price:</p>
-
                   <strong>Rs. {formatPrice(calculateTotalPrice())}</strong>
                 </div>
 
                 <div className="inline-flex w-full items-center justify-between">
                   <p className="text-md font-semibold">Remaining Amount:</p>
                   <strong
-                    className={`${formData.paymentType === "Partial Payment" ? "text-red-500" : "text-gray-500"}`}
+                    className={`${
+                      formData.paymentType === "Partial Payment"
+                        ? "text-red-500"
+                        : "text-gray-500"
+                    }`}
                   >
                     {formData.paymentType === "Full Payment"
                       ? "Rs. 0"
@@ -676,7 +1080,6 @@ export default function AddCandForm() {
                   <p className="text-xl font-semibold md:text-3xl lg:text-4xl">
                     Subtotal:
                   </p>
-
                   <strong className="text-2xl md:text-3xl">
                     <small>Rs.</small>{" "}
                     {formatPrice(

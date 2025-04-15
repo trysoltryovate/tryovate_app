@@ -1,3 +1,29 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/" },
+    {
+      "source": "/login",
+      "destination": "http://44.195.24.107:2020/TryovateApp/login"
+    },
+    {
+      "source": "/api/candidate-api/add-candidate",
+      "destination": "http://44.195.24.107:2020/TryovateApp/candidate-api/add-candidate"
+    },
+    {
+      "source": "/api/candidate-api/getAll",
+      "destination": "http://44.195.24.107:2020/TryovateApp/candidate-api/getAll"
+    },
+    {
+      "source": "/api/candidate-api/get",
+      "destination": "http://44.195.24.107:2020/TryovateApp/candidate-api/get"
+    },
+    {
+      "source": "/api/candidate-api/delete",
+      "destination": "http://44.195.24.107:2020/TryovateApp/candidate-api/delete"
+    },
+    {
+      "source": "/api/candidate-api/update",
+      "destination": "http://44.195.24.107:2020/TryovateApp/candidate-api/update"
+    }
+  ]
 }

@@ -1,10 +1,11 @@
 import { Alert, Snackbar } from "@mui/material";
 import axios from "axios";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Logo from "../../assets/logo.png";
-import { IoEye } from "react-icons/io5";
 import { IoMdEyeOff } from "react-icons/io";
+import { IoEye } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
+
+import Logo from "../../assets/logo.png";
 
 export default function ResetPassword() {
   const [userName, setUserName] = useState("");

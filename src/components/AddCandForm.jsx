@@ -1,3 +1,5 @@
+import "jspdf-autotable";
+
 import {
   Alert,
   Checkbox,
@@ -15,26 +17,23 @@ import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormLabel from "@mui/material/FormLabel";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
+import Select from "@mui/material/Select";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Stepper from "@mui/material/Stepper";
 import TextField from "@mui/material/TextField";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
 import axios from "axios";
+import { jsPDF } from "jspdf";
 import * as React from "react";
 import { IoMdArrowRoundForward } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 
-import { coursesList, formatPrice } from "../utils/constants";
-import Candidates from "../pages/Candidates";
-import { jsPDF } from "jspdf";
-import "jspdf-autotable";
-import html2canvas from "html2canvas";
 import Logo from "../assets/tryovate_logo_darkMode2.png";
+import { coursesList, formatPrice } from "../utils/constants";
 
 const steps = [
   "Personal Details",

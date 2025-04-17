@@ -45,7 +45,7 @@ const steps = [
 
 export default function AddCandForm() {
   const [activeStep, setActiveStep] = React.useState(0);
-
+  const [hasPostGraduation, setHasPostGraduation] = React.useState("");
   const [formData, setFormData] = React.useState({
     fullName: "krunal",
     dob: "1998-01-03",
@@ -66,7 +66,7 @@ export default function AddCandForm() {
     specializationMajor: "BSC",
     percentageCgpa: 6.8,
     highestDegree: "PG",
-    pgUniversityCollegeName: "JNTU gfgf",
+    pgUniversityCollegeName: "JNTU",
     pgYearOfPassing: 2022,
     pgSpecializationMajor: "Computer",
     pgPercentageCgpa: 6.8,

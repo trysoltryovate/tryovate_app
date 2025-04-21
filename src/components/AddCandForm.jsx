@@ -79,6 +79,14 @@ export default function AddCandForm() {
     remainingAmount: "",
   });
 
+  const [errors, setErrors] = React.useState({
+    contactNumber: "",
+    alternateNumber: "",
+    email: "",
+    aadharCard: "",
+    panCard: "",
+  });
+
   const handleBatchId = (event) => {
     setFormData((prev) => {
       return { ...prev, batchId: event.target.value };
@@ -116,281 +124,6 @@ export default function AddCandForm() {
     formData.paymentMode,
     formData.paymentType, // Ensure this is included
   ]);
-
-  // const downloadSummaryAsPDF = () => {
-  //   const doc = new jsPDF();
-
-  //   const summaryContent = `
-  //     Courses Selected: ${formData.selectedCourse.length}
-  //     Payment Structure: ${formData.paymentType}
-  //     Mode of payment: ${formData.paymentMode || "-/-"}
-  //     GST: ${formData.paymentMode === "Online" ? "18%" : "NA"}
-  //     Price: Rs. ${formatPrice(calculateTotalPrice())}
-  //     Remaining Amount: Rs. ${formData.paymentType === "Full Payment" ? "0" : formatPrice(formData.remainingAmount)}
-  //     Subtotal: Rs. ${formatPrice(
-  //       formData.paymentMode === "Online"
-  //         ? calculateTotalPrice() + calculateTotalPrice() * 0.18
-  //         : calculateTotalPrice(),
-  //     )}
-  //   `;
-
-  //   doc.text(summaryContent, 10, 10);
-  //   doc.save("summary.pdf");
-  // }
-
-  // const downloadSummaryAsPDF = () => {
-  //   const doc = new jsPDF();
-  //   const startX = 20;
-  //   let startY = 20;
-  //   const lineHeight = 10;
-
-  //   // Convert selected course names to comma-separated (or list format)
-  //   const selectedCourses =
-  //     formData.selectedCourse.length > 0
-  //       ? formData.selectedCourse.join(", ")
-  //       : "None";
-
-  //   const data = [
-  //     ["Courses Selected", selectedCourses],
-  //     ["Payment Structure", formData.paymentType],
-  //     ["Mode of Payment", formData.paymentMode || "-/-"],
-  //     ["GST", formData.paymentMode === "Online" ? "18%" : "NA"],
-  //     ["Price", `Rs. ${formatPrice(calculateTotalPrice())}`],
-  //     [
-  //       "Remaining Amount",
-  //       `Rs. ${formData.paymentType === "Full Payment" ? "0" : formatPrice(formData.remainingAmount)}`,
-  //     ],
-  //     [
-  //       "Subtotal",
-  //       `Rs. ${
-  //         formData.paymentMode === "Online"
-  //           ? formatPrice(calculateTotalPrice() + calculateTotalPrice() * 0.18)
-  //           : formatPrice(calculateTotalPrice())
-  //       }`,
-  //     ],
-  //   ];
-
-  //   // Header
-  //   doc.setFont("helvetica", "bold");
-  //   doc.text("Description", startX, startY);
-  //   doc.text("Details", startX + 90, startY);
-  //   doc.setFont("helvetica", "normal");
-
-  //   startY += 5;
-
-  //   // Divider
-  //   doc.line(startX, startY, startX + 170, startY);
-  //   startY += 5;
-
-  //   // Table Body
-  //   data.forEach(([desc, detail]) => {
-  //     // Wrap text if needed (basic line splitting for long details)
-  //     const detailLines = doc.splitTextToSize(detail.toString(), 90);
-  //     doc.text(desc.toString(), startX, startY);
-  //     doc.text(detailLines, startX + 90, startY);
-  //     startY += detailLines.length * lineHeight;
-  //   });
-
-  //   doc.save("summary.pdf");
-  // };
-
-  // const downloadSummaryAsPDF = () => {
-  //   const doc = new jsPDF();
-  //   const startX = 20;
-  //   let startY = 20;
-  //   const lineHeight = 10;
-
-  //   // Convert selected course names to comma-separated (or list format)
-  //   const selectedCourses =
-  //     formData.selectedCourse.length > 0
-  //       ? formData.selectedCourse.join(", ")
-  //       : "None";
-
-  //   const data = [
-  //     ["Courses Selected", selectedCourses],
-  //     ["Payment Structure", formData.paymentType],
-  //     ["Mode of Payment", formData.paymentMode || "-/-"],
-  //     ["GST", formData.paymentMode === "Online" ? "18%" : "NA"],
-  //     ["Price", `Rs. ${formatPrice(calculateTotalPrice())}`],
-  //     [
-  //       "Remaining Amount",
-  //       `Rs. ${formData.paymentType === "Full Payment" ? "0" : formatPrice(formData.remainingAmount)}`,
-  //     ],
-  //     [
-  //       "Subtotal",
-  //       `Rs. ${
-  //         formData.paymentMode === "Online"
-  //           ? formatPrice(calculateTotalPrice() + calculateTotalPrice() * 0.18)
-  //           : formatPrice(calculateTotalPrice())
-  //       }`,
-  //     ],
-  //   ];
-
-  //   // Header
-  //   doc.setFont("helvetica", "bold");
-  //   doc.text("Description", startX, startY);
-  //   doc.text("Details", startX + 90, startY);
-  //   doc.setFont("helvetica", "normal");
-
-  //   startY += 5;
-
-  //   // Divider
-  //   doc.line(startX, startY, startX + 170, startY);
-  //   startY += 5;
-
-  //   // Table Body
-  //   data.forEach(([desc, detail]) => {
-  //     // Wrap text if needed (basic line splitting for long details)
-  //     const detailLines = doc.splitTextToSize(detail.toString(), 90);
-  //     doc.text(desc.toString(), startX, startY);
-  //     doc.text(detailLines, startX + 90, startY);
-  //     startY += detailLines.length * lineHeight;
-  //   });
-
-  //   doc.save("summary.pdf");
-  // };
-
-  // const downloadSummaryAsPDF = () => {
-  //   const doc = new jsPDF();
-  //   const startX = 20;
-  //   let startY = 20;
-  //   const lineHeight = 10;
-
-  //   const selectedCourses =
-  //     formData.selectedCourse.length > 0
-  //       ? formData.selectedCourse.join(", ")
-  //       : "None";
-
-  //   const price = calculateTotalPrice();
-  //   const gstIncluded = formData.paymentMode === "Online";
-  //   const subtotal = gstIncluded ? price + price * 0.18 : price;
-
-  //   const isPartial = formData.paymentType === "Partial Payment";
-  //   const remainingAmount = isPartial ? formData.remainingAmount : 0;
-  //   const paidAmount = isPartial ? price - remainingAmount : price;
-
-  //   const data = [
-  //     ["Courses Selected", selectedCourses],
-  //     ["Payment Structure", formData.paymentType],
-  //     ["Mode of Payment", formData.paymentMode || "-/-"],
-  //     ["GST", gstIncluded ? "18%" : "NA"],
-  //     ["Price", `Rs. ${formatPrice(price)}`],
-  //   ];
-
-  //   // If partial, add paid and remaining
-  //   if (isPartial) {
-  //     data.push(["Paid Amount", `Rs. ${formatPrice(paidAmount)}`]);
-  //     data.push(["Remaining Amount", `Rs. ${formatPrice(remainingAmount)}`]);
-  //   }
-
-  //   data.push(["Subtotal", `Rs. ${formatPrice(subtotal)}`]);
-
-  //   // Header
-  //   doc.setFont("helvetica", "bold");
-  //   doc.setTextColor(0, 0, 0);
-  //   doc.text("Description", startX, startY);
-  //   doc.text("Details", startX + 90, startY);
-  //   doc.setFont("helvetica", "normal");
-
-  //   startY += 5;
-  //   doc.line(startX, startY, startX + 170, startY);
-  //   startY += 5;
-
-  //   data.forEach(([desc, detail]) => {
-  //     if (desc === "Subtotal") {
-  //       doc.setFont("helvetica", "bold");
-  //       doc.setTextColor(0, 0, 0);
-  //     } else if (desc === "Remaining Amount") {
-  //       doc.setFont("helvetica", "normal");
-  //       doc.setTextColor(255, 0, 0); // Red
-  //     } else {
-  //       doc.setFont("helvetica", "normal");
-  //       doc.setTextColor(0, 0, 0);
-  //     }
-
-  //     const detailLines = doc.splitTextToSize(detail.toString(), 90);
-
-  //     doc.text(desc.toString(), startX, startY);
-  //     doc.text(detailLines, startX + 90, startY);
-
-  //     startY += detailLines.length * lineHeight;
-  //   });
-
-  //   doc.save("summary.pdf");
-  // };
-
-  // const downloadSummaryAsPDF = () => {
-  //   const doc = new jsPDF();
-  //   const startX = 20;
-  //   let startY = 20;
-  //   const lineHeight = 10;
-
-  //   const selectedCourses =
-  //     formData.selectedCourse.length > 0
-  //       ? formData.selectedCourse.join(", ")
-  //       : "None";
-
-  //   const price = calculateTotalPrice();
-  //   const gstIncluded = formData.paymentMode === "Online";
-  //   const subtotal = gstIncluded ? price + price * 0.18 : price;
-
-  //   const isPartial = formData.paymentType === "Partial Payment";
-
-  //   const data = [
-  //     ["Courses Selected", selectedCourses],
-  //     ["Payment Structure", formData.paymentType],
-  //     ["Mode of Payment", formData.paymentMode || "-/-"],
-  //     ["GST", gstIncluded ? "18%" : "NA"],
-  //     ["Price", `Rs. ${formatPrice(price)}`],
-  //   ];
-
-  //   // Show only the partial input field data if payment type is Partial Payment
-  //   if (isPartial) {
-  //     data.push([
-  //       "Paid Amount",
-  //       `Rs. ${formatPrice(formData.partialPaidAmount || 0)}`,
-  //     ]);
-  //     data.push([
-  //       "Remaining Amount",
-  //       `Rs. ${formatPrice(formData.remainingAmount || 0)}`,
-  //     ]);
-  //   }
-
-  //   data.push(["Subtotal", `Rs. ${formatPrice(subtotal)}`]);
-
-  //   // Header
-  //   doc.setFont("helvetica", "bold");
-  //   doc.setTextColor(0, 0, 0);
-  //   doc.text("Description", startX, startY);
-  //   doc.text("Details", startX + 90, startY);
-  //   doc.setFont("helvetica", "normal");
-
-  //   startY += 5;
-  //   doc.line(startX, startY, startX + 170, startY);
-  //   startY += 5;
-
-  //   data.forEach(([desc, detail]) => {
-  //     if (desc === "Subtotal") {
-  //       doc.setFont("helvetica", "bold");
-  //       doc.setTextColor(0, 0, 0);
-  //     } else if (desc === "Remaining Amount") {
-  //       doc.setFont("helvetica", "normal");
-  //       doc.setTextColor(255, 0, 0); // Red
-  //     } else {
-  //       doc.setFont("helvetica", "normal");
-  //       doc.setTextColor(0, 0, 0);
-  //     }
-
-  //     const detailLines = doc.splitTextToSize(detail.toString(), 90);
-
-  //     doc.text(desc.toString(), startX, startY);
-  //     doc.text(detailLines, startX + 90, startY);
-
-  //     startY += detailLines.length * lineHeight;
-  //   });
-
-  //   doc.save("summary.pdf");
-  // };
 
   const downloadSummaryAsPDF = () => {
     const doc = new jsPDF();
@@ -456,7 +189,7 @@ export default function AddCandForm() {
 
     startY += 5;
     doc.line(startX, startY, startX + 170, startY);
-    startY += 5;
+    startY += 8;
 
     data.forEach(([desc, detail]) => {
       if (desc === "Subtotal") {
@@ -475,11 +208,11 @@ export default function AddCandForm() {
       doc.text(detailLines, startX + 90, startY);
       startY += detailLines.length * lineHeight;
     });
-    startY += 5;
+    startY += -2;
     doc.line(startX, startY, startX + 170, startY);
-    startY += 5;
+    startY += 2;
     // Add Contact Information
-    startY += 10; // Add some space before the contact info
+    startY += 8; // Add some space before the contact info
     doc.setFont("helvetica", "bold");
     doc.text("Our Address", startX, startY);
     startY += lineHeight; // Move down after the header
@@ -501,7 +234,66 @@ export default function AddCandForm() {
     doc.save("summary.pdf");
   };
 
+  //====================validation===========================
+
+  const validateFields = (formData) => {
+    const newErrors = {};
+
+    // Contact Number - must be 10 digits and start with 6-9
+    if (!/^[6-9]\d{9}$/.test(formData.contactNumber)) {
+      newErrors.contactNumber =
+        "Contact number must start with 6-9 and be 10 digits";
+    }
+
+    // Alternate Number - optional, must also start with 6-9 and be 10 digits
+    if (
+      formData.alternateNumber &&
+      !/^[6-9]\d{9}$/.test(formData.alternateNumber)
+    ) {
+      newErrors.alternateNumber =
+        "Alternate number must start with 6-9 and be 10 digits";
+    }
+
+    // Email - basic regex check
+    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Invalid email address";
+    }
+
+    // Aadhar Card - must be exactly 12 digits
+    if (!/^\d{12}$/.test(formData.aadharCard)) {
+      newErrors.aadharCard = "Aadhar card must be 12 digits";
+    }
+
+    // PAN Card - must match format: 5 letters, 4 digits, 1 letter
+    const pan = formData.panCard?.toUpperCase() || "";
+    if (!/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(pan)) {
+      newErrors.panCard = "Invalid PAN card format (e.g., ABCDE1234F)";
+    }
+
+    // Update formData with uppercase PAN
+    setFormData((prev) => ({
+      ...prev,
+      panCard: pan,
+    }));
+
+    // Set error messages
+    setErrors({
+      contactNumber: newErrors.contactNumber || "",
+      alternateNumber: newErrors.alternateNumber || "",
+      email: newErrors.email || "",
+      aadharCard: newErrors.aadharCard || "",
+      panCard: newErrors.panCard || "",
+    });
+
+    // Return true if no errors
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async () => {
+    // Final validation before submit
+    const isValid = validateFields(formData);
+
+    if (!isValid) return; // Prevent submission if any field is invalid
     try {
       // Calculate the total amount based on selected courses
       let totalAmount = calculateTotalPrice();
@@ -521,8 +313,6 @@ export default function AddCandForm() {
             : totalAmount - (formData.partialPaidAmount || 0), // Calculate remaining amount
       };
 
-      console.log("Data to submit:", dataToSubmit); // Log the data being submitted
-
       const response = await axios.post(
         import.meta.env.VITE_ADD_CANDIDATE_API_URL,
         dataToSubmit,
@@ -539,10 +329,10 @@ export default function AddCandForm() {
         });
       }
     } catch (error) {
-      console.error("Error submitting form:", error);
       setSnackbar({
         open: true,
-        message: "Something went wrong!",
+        //message: "Something went wrong!",
+        message: error.response.data.statusMsg,
         severity: "error",
       });
     }
@@ -575,10 +365,39 @@ export default function AddCandForm() {
     });
   };
 
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+
+  //   setFormData((prev) => ({ ...prev, [name]: value }));
+  // };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    let updatedValue = value;
+
+    // Validate Contact Number and Alternate Number (only numbers, max length 10)
+    if (name === "contactNumber" || name === "alternateNumber") {
+      updatedValue = updatedValue.replace(/\D/g, ""); // Remove non-numeric characters
+      if (updatedValue.length > 10) return; // Prevent more than 10 digits
+    }
+
+    // Convert to uppercase for PAN card
+    if (name === "panCard") {
+      updatedValue = updatedValue.toUpperCase();
+    }
+
+    // Update formData with the new value
+    setFormData((prev) => ({
+      ...prev,
+      [name]: updatedValue,
+    }));
+
+    // Validate fields after updating
+    validateFields({
+      ...formData,
+      [name]: updatedValue,
+    });
   };
 
   const calculateTotalPrice = () => {
@@ -681,6 +500,9 @@ export default function AddCandForm() {
               value={formData.contactNumber}
               onChange={handleChange}
               margin="dense"
+              error={!!errors.contactNumber}
+              helperText={errors.contactNumber}
+              inputProps={{ maxLength: 10 }}
             />
             <TextField
               label="Email Address"
@@ -689,6 +511,8 @@ export default function AddCandForm() {
               value={formData.email}
               onChange={handleChange}
               margin="dense"
+              error={!!errors.email}
+              helperText={errors.email}
             />
             <TextField
               label="Current Address"
@@ -724,6 +548,9 @@ export default function AddCandForm() {
               value={formData.alternateNumber}
               onChange={handleChange}
               margin="dense"
+              error={!!errors.alternateNumber}
+              helperText={errors.alternateNumber}
+              inputProps={{ maxLength: 10 }}
             />
             <TextField
               label="Aadhar Card"
@@ -731,6 +558,9 @@ export default function AddCandForm() {
               value={formData.aadharCard}
               onChange={handleChange}
               margin="dense"
+              error={!!errors.aadharCard}
+              helperText={errors.aadharCard}
+              inputProps={{ maxLength: 12 }}
             />
             <TextField
               label="Pan Card"
@@ -738,6 +568,8 @@ export default function AddCandForm() {
               value={formData.panCard}
               onChange={handleChange}
               margin="dense"
+              error={!!errors.panCard}
+              helperText={errors.panCard}
             />
             <TextField
               label="Reference"
@@ -975,6 +807,7 @@ export default function AddCandForm() {
                       label="Partial Amount To Be Paid"
                       name="partialPaidAmount"
                       type="number"
+                      onWheel={(e) => e.target.blur()}
                       value={formData?.partialPaidAmount}
                       onChange={(e) => handlePartialAmtChange(e)}
                       margin="dense"

@@ -38,11 +38,20 @@ const steps = [
 export default function EditCandForm({ candidate, candidateId }) {
   const [activeStep, setActiveStep] = React.useState(0);
   const [formData, setFormData] = React.useState(candidate);
+  console.log(formData);
 
   const [snackbar, setSnackbar] = React.useState({
     open: false,
     message: "",
     severity: "success",
+  });
+
+  const [errors, setErrors] = React.useState({
+    contactNumber: "",
+    alternateNumber: "",
+    email: "",
+    aadharCard: "",
+    panCard: "",
   });
 
   React.useEffect(() => {
@@ -97,33 +106,105 @@ export default function EditCandForm({ candidate, candidateId }) {
     });
   };
 
+  //=====================validations==========================
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    let updatedValue = value;
+
+    if (name === "contactNumber" || name === "alternateNumber") {
+      updatedValue = updatedValue.replace(/\D/g, "");
+      if (updatedValue.length > 10) return;
+    }
+
+    if (name === "panCard") {
+      updatedValue = updatedValue.toUpperCase();
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: updatedValue,
+    }));
+
+    validateFields({
+      ...formData,
+      [name]: updatedValue,
+    });
+  };
+
+  const validateFields = (formData) => {
+    const newErrors = {};
+
+    // Contact Number - must be 10 digits and start with 6-9
+    if (!/^[6-9]\d{9}$/.test(formData.contactNumber)) {
+      newErrors.contactNumber =
+        "Contact number must start with 6-9 and be 10 digits";
+    }
+
+    // Alternate Number - optional, must also start with 6-9 and be 10 digits
+    if (
+      formData.alternateNumber &&
+      !/^[6-9]\d{9}$/.test(formData.alternateNumber)
+    ) {
+      newErrors.alternateNumber =
+        "Alternate number must start with 6-9 and be 10 digits";
+    }
+
+    // Email - basic regex check
+    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Invalid email address";
+    }
+
+    // Aadhar Card - must be exactly 12 digits
+    if (!/^\d{12}$/.test(formData.aadharCard)) {
+      newErrors.aadharCard = "Aadhar card must be 12 digits";
+    }
+
+    // PAN Card - must match format: 5 letters, 4 digits, 1 letter
+    const pan = formData.panCard?.toUpperCase() || "";
+    if (!/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(pan)) {
+      newErrors.panCard = "Invalid PAN card format (e.g., ABCDE1234F)";
+    }
+
+    // Update formData with uppercase PAN
+    setFormData((prev) => ({
+      ...prev,
+      panCard: pan,
+    }));
+
+    // Set error messages
+    setErrors({
+      contactNumber: newErrors.contactNumber || "",
+      alternateNumber: newErrors.alternateNumber || "",
+      email: newErrors.email || "",
+      aadharCard: newErrors.aadharCard || "",
+      panCard: newErrors.panCard || "",
+    });
+
+    // Return true if no errors
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async () => {
+    const isValid = validateFields(formData);
+    if (!isValid) return;
+
     try {
-      // Calculate the total amount based on selected courses
       let totalAmount = calculateTotalPrice();
 
-      // If payment mode is Online, add GST
       if (formData.paymentMode === "Online") {
-        totalAmount += totalAmount * 0.18; // Adding 18% GST
+        totalAmount += totalAmount * 0.18;
       }
 
-      // Prepare the data to submit
       const dataToSubmit = {
         ...formData,
-        totalPayableAmount: totalAmount, // Ensure totalPayableAmount includes GST
+        totalPayableAmount: totalAmount,
         remainingAmount:
           formData.paymentType === "Full Payment"
             ? 0
-            : totalAmount - (formData.partialPaidAmount || 0), // Calculate remaining amount
+            : totalAmount - (formData.partialPaidAmount || 0),
       };
-
-      console.log("Data to submit:", dataToSubmit); // Log the data being submitted
 
       const response = await axios.put(
         `${import.meta.env.VITE_UPDATE_CANDIDATE_API_URL}/${candidateId}`,
@@ -141,8 +222,8 @@ export default function EditCandForm({ candidate, candidateId }) {
         });
       }
     } catch (error) {
+      console.error("Error submitting form:", error);
       if (error.response) {
-        console.error("Error submitting form:", error.response.data);
         setSnackbar({
           open: true,
           message: error.response.data.message || "Something went wrong!",
@@ -152,13 +233,12 @@ export default function EditCandForm({ candidate, candidateId }) {
         console.error("Error:", error.message);
         setSnackbar({
           open: true,
-          message: "An unexpected error occurred.",
+          message: "An unexpected error occured.",
           severity: "error",
         });
       }
     }
   };
-
   const handleNext = () => {
     if (activeStep === steps.length - 1) {
       handleSubmit();
@@ -263,6 +343,9 @@ export default function EditCandForm({ candidate, candidateId }) {
               value={formData.contactNumber}
               onChange={handleChange}
               margin="dense"
+              error={!!errors.contactNumber}
+              helperText={errors.contactNumber}
+              inputProps={{ maxLength: 10 }}
             />
             <TextField
               label="Email Address"
@@ -271,6 +354,8 @@ export default function EditCandForm({ candidate, candidateId }) {
               value={formData.email}
               onChange={handleChange}
               margin="dense"
+              error={!!errors.email}
+              helperText={errors.email}
             />
             <TextField
               label="Current Address"
@@ -306,6 +391,9 @@ export default function EditCandForm({ candidate, candidateId }) {
               value={formData.alternateNumber}
               onChange={handleChange}
               margin="dense"
+              error={!!errors.alternateNumber}
+              helperText={errors.alternateNumber}
+              inputProps={{ maxLength: 10 }}
             />
             <TextField
               label="Aadhar Card"
@@ -313,6 +401,9 @@ export default function EditCandForm({ candidate, candidateId }) {
               value={formData.aadharCard}
               onChange={handleChange}
               margin="dense"
+              error={!!errors.aadharCard}
+              helperText={errors.aadharCard}
+              inputProps={{ maxLength: 12 }}
             />
             <TextField
               label="Pan Card"
@@ -320,6 +411,8 @@ export default function EditCandForm({ candidate, candidateId }) {
               value={formData.panCard}
               onChange={handleChange}
               margin="dense"
+              error={!!errors.panCard}
+              helperText={errors.panCard}
             />
             <TextField
               label="Reference"
@@ -332,46 +425,6 @@ export default function EditCandForm({ candidate, candidateId }) {
         );
       case 1:
         return (
-          // <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-4">
-          //   <TextField
-          //     label="Highest Degree"
-          //     name="highestDegree"
-          //     value={formData.highestDegree}
-          //     onChange={handleChange}
-          //     margin="dense"
-          //   />
-          //   <TextField
-          //     label="University/College Name"
-          //     name="universityCollegeName"
-          //     value={formData.universityCollegeName}
-          //     onChange={handleChange}
-          //     margin="dense"
-          //   />
-          //   <TextField
-          //     label="Year of Passing"
-          //     name="yearOfPassing"
-          //     type="number"
-          //     value={formData.yearOfPassing}
-          //     onChange={handleChange}
-          //     margin="dense"
-          //   />
-          //   <TextField
-          //     label="Specialization/Major"
-          //     name="specializationMajor"
-          //     value={formData.specializationMajor}
-          //     onChange={handleChange}
-          //     margin="dense"
-          //   />
-          //   <TextField
-          //     label="Percentage/CGPA"
-          //     name="percentageCgpa"
-          //     type="number"
-          //     value={formData.percentageCgpa}
-          //     onChange={handleChange}
-          //     margin="dense"
-          //   />
-          // </div>
-
           <div>
             <h1 className="text-2xl font-semibold">Graduation</h1>
             <div className="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-4">

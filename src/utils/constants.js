@@ -39,26 +39,41 @@ export const tableFields = [
 export const coursesList = [
   {
     id: "1",
-    courseName: "Full Stack Web Development",
-    coursePrice: 45000,
+    courseName: "Advanced Generative AI Program",
+    coursePrice: 99000,
   },
   {
     id: "2",
-    courseName: "Data Science & ML",
-    coursePrice: 55000,
+    courseName: "Data Science (Data Analytics + AI / ML / DL)",
+    coursePrice: 80000,
   },
   {
     id: "3",
-    courseName: "Frontend with React",
-    coursePrice: 30000,
+    courseName: "Data Analytics (Python + SQL + Power BI + Excel)",
+    coursePrice: 50000,
   },
   {
     id: "4",
-    courseName: "Backend with Node.js",
-    coursePrice: 35000,
+    courseName: "Data Engineer (Azure/GCP/AWS/DevOps)",
+    coursePrice: 60000,
   },
   {
     id: "5",
+    courseName: ".Net (Backend) with Angular (FS)",
+    coursePrice: 60000,
+  },
+  {
+    id: "6",
+    courseName: "React JS - Front End",
+    coursePrice: 40000,
+  },
+  {
+    id: "7",
+    courseName: "JAVA FS (Java Backend + React JS + AWS)",
+    coursePrice: 60000,
+  },
+  {
+    id: "8",
     courseName: "Java Backend",
     coursePrice: 40000,
   },

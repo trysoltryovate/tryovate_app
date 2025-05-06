@@ -36,50 +36,8 @@ export const tableFields = [
 ];
 
 // Offering Courses List...
-export const coursesListWithFullPayment = [
-  {
-    id: "1",
-    courseName: "Advanced Generative AI Program",
-    coursePrice: 99000,
-  },
-  {
-    id: "2",
-    courseName: "Data Science (Data Analytics + AI / ML / DL)",
-    coursePrice: 80000,
-  },
-  {
-    id: "3",
-    courseName: "Data Analytics (Python + SQL + Power BI + Excel)",
-    coursePrice: 50000,
-  },
-  {
-    id: "4",
-    courseName: "Data Engineer (Azure/GCP/AWS/DevOps)",
-    coursePrice: 60000,
-  },
-  {
-    id: "5",
-    courseName: ".Net (Backend) with Angular (FS)",
-    coursePrice: 60000,
-  },
-  {
-    id: "6",
-    courseName: "React JS - Front End",
-    coursePrice: 40000,
-  },
-  {
-    id: "7",
-    courseName: "JAVA FS (Java Backend + React JS + AWS)",
-    coursePrice: 60000,
-  },
-  {
-    id: "8",
-    courseName: "Java Backend",
-    coursePrice: 40000,
-  },
-];
 
-export const singlePaymentList = [
+export const coursesList = [
   { id: "1", courseName: "Java Backend", amount: 35000 },
   {
     id: "2",
@@ -104,31 +62,4 @@ export const singlePaymentList = [
     amount: 65000,
   },
   { id: "8", courseName: "Advanced Generative AI Program", amount: 85000 },
-];
-
-export const twoTermsPaymentList = [
-  { id: "1", courseName: "Java Backend", amount: 45000 },
-  {
-    id: "2",
-    courseName: "JAVA FS (Java Backend + React Js + AWS)",
-    amount: 60000,
-  },
-  { id: "3", courseName: "React JS - Front End", amount: 45000 },
-  { id: "4", courseName: ".Net (Backend) with Angular (FS)", amount: 60000 },
-  {
-    id: "5",
-    courseName: "Data Engineer – (Azure/GCP/AWS/DevOps)",
-    amount: 55000,
-  },
-  {
-    id: "6",
-    courseName: "Data Analytics (Python + SQL + Power BI + Excel)",
-    amount: 55000,
-  },
-  {
-    id: "7",
-    courseName: "Data Science (Data Analytics + AI / ML / DL)",
-    amount: 75000,
-  },
-  { id: "8", courseName: "Advanced Generative AI Program", amount: 95000 },
 ];

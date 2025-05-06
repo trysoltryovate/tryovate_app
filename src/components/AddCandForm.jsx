@@ -33,11 +33,7 @@ import { IoMdArrowRoundForward } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 
 import Logo from "../assets/tryovate_logo_darkMode2.png";
-import {
-  singlePaymentList,
-  twoTermsPaymentList,
-  formatPrice,
-} from "../utils/constants";
+import { coursesList, formatPrice } from "../utils/constants";
 
 const steps = [
   "Personal Details",
@@ -438,40 +434,6 @@ export default function AddCandForm() {
     }));
   };
 
-  // const handleChange = (e) => {
-  //   const { name, value } = e.target;
-
-  //   let updatedValue = value;
-
-  //   // Validate Contact Number and Alternate Number (only numbers, max length 10)
-  //   if (name === "contactNumber" || name === "alternateNumber") {
-  //     updatedValue = updatedValue.replace(/\D/g, ""); // Remove non-numeric characters
-  //     if (updatedValue.length > 10) return; // Prevent more than 10 digits
-  //   }
-
-  //   // Convert to uppercase for PAN card
-  //   if (name === "panCard") {
-  //     updatedValue = updatedValue.toUpperCase();
-  //   }
-
-  //   // Prepare updated formData
-  //   let updatedFormData = {
-  //     ...formData,
-  //     [name]: updatedValue,
-  //   };
-
-  //   // Reset paymentMode when paymentType changes
-  //   if (name === "paymentType") {
-  //     updatedFormData.paymentMode = "";
-  //   }
-
-  //   // Update formData with the new values
-  //   setFormData(updatedFormData);
-
-  //   // Validate fields after updating
-  //   validateFields(updatedFormData);
-  // };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -513,7 +475,7 @@ export default function AddCandForm() {
     let total = 0;
 
     selectedCourses.forEach((courseName) => {
-      const course = singlePaymentList.find(
+      const course = coursesList.find(
         (course) => course.courseName === courseName,
       );
       if (course) {
@@ -803,7 +765,7 @@ export default function AddCandForm() {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {singlePaymentList.map((course, index) => (
+                        {coursesList.map((course, index) => (
                           <TableRow
                             key={course.id}
                             sx={{

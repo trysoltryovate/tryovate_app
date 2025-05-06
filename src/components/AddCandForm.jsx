@@ -80,8 +80,6 @@ export default function AddCandForm() {
     fullPaidAmount: 0,
     fullAmountInPartialMode: 0,
     partialPaidAmount: 0,
-    price: 0,
-    gstAmount: 0,
     totalPayableAmount: 0,
     remainingAmount: 0,
   });

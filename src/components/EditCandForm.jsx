@@ -26,7 +26,11 @@ import * as React from "react";
 import { IoMdArrowRoundForward } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 
-import { coursesList, formatPrice } from "../utils/constants";
+import {
+  singlePaymentList,
+  twoTermsPaymentList,
+  formatPrice,
+} from "../utils/constants";
 
 const steps = [
   "Personal Details",

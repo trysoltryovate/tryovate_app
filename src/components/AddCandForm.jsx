@@ -33,7 +33,11 @@ import { IoMdArrowRoundForward } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 
 import Logo from "../assets/tryovate_logo_darkMode2.png";
-import { coursesList, formatPrice } from "../utils/constants";
+import {
+  singlePaymentList,
+  twoTermsPaymentList,
+  formatPrice,
+} from "../utils/constants";
 
 const steps = [
   "Personal Details",
@@ -44,7 +48,6 @@ const steps = [
 
 export default function AddCandForm() {
   const [activeStep, setActiveStep] = React.useState(0);
-  const [hasPostGraduation, setHasPostGraduation] = React.useState("");
   const [formData, setFormData] = React.useState({
     fullName: "krunal",
     dob: "1998-01-03",
@@ -74,10 +77,95 @@ export default function AddCandForm() {
     batchId: "",
     paymentType: "",
     paymentMode: "",
+    fullPaidAmount: 0,
+    fullAmountInPartialMode: 0,
     partialPaidAmount: 0,
+    price: 0,
+    gstAmount: 0,
     totalPayableAmount: 0,
-    remainingAmount: "",
+    remainingAmount: 0,
   });
+
+  React.useEffect(() => {
+    const partial = parseFloat(formData.partialPaidAmount) || 0;
+    const full = parseFloat(formData.fullPaidAmount) || 0;
+    const totalInPartial = parseFloat(formData.fullAmountInPartialMode) || 0;
+
+    // Determine total based on payment type
+    let total = formData.paymentType === "Full Payment" ? full : totalInPartial;
+
+    // Add GST if payment mode is Online
+    if (formData.paymentMode === "Online") {
+      total += total * 0.18; // Correctly add GST to the total
+    }
+
+    // Set remaining amount based on payment type
+    const remaining =
+      formData.paymentType === "Full Payment" ? 0 : total - partial;
+
+    setFormData((prev) => ({
+      ...prev,
+      totalPayableAmount: total,
+      remainingAmount: remaining,
+    }));
+  }, [
+    formData.fullPaidAmount,
+    formData.partialPaidAmount,
+    formData.fullAmountInPartialMode,
+    formData.paymentMode,
+    formData.paymentType,
+  ]);
+
+  <div className="space-y-4">
+    {/* GST */}
+    <span className="inline-flex items-center gap-2">
+      <small className="font-medium opacity-75">GST:</small>
+      <p className="text-sm">
+        {formData?.paymentMode === "Online" ? "18%" : "NA"}
+      </p>
+    </span>
+
+    {/* Price */}
+    <div className="inline-flex w-full items-center justify-between">
+      <p className="text-md font-semibold">Price:</p>
+      <strong>
+        Rs.
+        {formatPrice(
+          formData.paymentType === "Partial Payment"
+            ? formData.fullAmountInPartialMode || 0
+            : formData.fullPaidAmount || 0,
+        )}
+      </strong>
+    </div>
+
+    {/* Remaining Amount */}
+    <div className="inline-flex w-full items-center justify-between">
+      <p className="text-md font-semibold">Remaining Amount:</p>
+      <strong
+        className={`${
+          formData.paymentType === "Partial Payment"
+            ? "text-red-500"
+            : "text-gray-500"
+        }`}
+      >
+        {formData.paymentType === "Partial Payment"
+          ? `Rs. ${formatPrice(formData.remainingAmount)}`
+          : "Rs. 0"}
+      </strong>
+    </div>
+
+    {/* Divider */}
+    <div className="h-[2px] w-full bg-gray-500" aria-hidden></div>
+
+    {/* Subtotal */}
+    <div className="mt-2 inline-flex w-full items-center justify-between">
+      <p className="text-xl font-semibold md:text-3xl lg:text-4xl">Subtotal:</p>
+      <strong className="text-2xl md:text-3xl">
+        <small>Rs.</small>
+        {formatPrice(formData.totalPayableAmount)}
+      </strong>
+    </div>
+  </div>;
 
   const [errors, setErrors] = React.useState({
     contactNumber: "",
@@ -99,31 +187,6 @@ export default function AddCandForm() {
     severity: "success",
   });
   //console.log(formData);
-
-  React.useEffect(() => {
-    let total = calculateTotalPrice();
-    const partial = parseFloat(formData.partialPaidAmount) || 0;
-
-    // Add GST if payment mode is Online
-    if (formData.paymentMode === "Online") {
-      total += total * 0.18; // Correctly add GST to the total
-    }
-
-    // Set remaining amount based on payment type
-    const remaining =
-      formData.paymentType === "Full Payment" ? 0 : total - partial;
-
-    setFormData((prev) => ({
-      ...prev,
-      totalPayableAmount: total,
-      remainingAmount: remaining,
-    }));
-  }, [
-    formData.selectedCourse,
-    formData.partialPaidAmount,
-    formData.paymentMode,
-    formData.paymentType, // Ensure this is included
-  ]);
 
   const downloadSummaryAsPDF = () => {
     const doc = new jsPDF();
@@ -344,31 +407,71 @@ export default function AddCandForm() {
 
   const navigate = useNavigate();
 
+  const handleFullAmtChange = (e) => {
+    let updatedValue = parseFloat(e.target.value);
+    setFormData((prev) => ({
+      ...prev,
+      fullPaidAmount: updatedValue,
+    }));
+  };
+  const handleFullAmountInPartialMode = (e) => {
+    const total = parseFloat(e.target.value);
+    const partial = formData.partialPaidAmount;
+
+    // Calculate remaining amount, ensure not negative
+    const remaining = total - partial > 0 ? total - partial : 0;
+
+    setFormData((prev) => ({
+      ...prev,
+      fullAmountInPartialMode: total,
+      remainingAmount: remaining,
+    }));
+  };
+
   const handlePartialAmtChange = (e) => {
     const partial = parseFloat(e.target.value);
-
-    setFormData((prev) => {
-      let total = calculateTotalPrice();
-
-      // Add GST if payment mode is Online
-      if (prev.paymentMode === "Online") {
-        total += total * 0.18; // Correctly add GST to the total
-      }
-
-      const remaining = total - partial;
-
-      return {
-        ...prev,
-        partialPaidAmount: partial,
-        remainingAmount: remaining,
-      };
-    });
+    const total = formData.fullAmountInPartialMode;
+    // Calculate remaining amount, ensure not negative
+    const remaining = total - partial > 0 ? total - partial : 0;
+    setFormData((prev) => ({
+      ...prev,
+      partialPaidAmount: partial,
+      remainingAmount: remaining,
+    }));
   };
 
   // const handleChange = (e) => {
   //   const { name, value } = e.target;
 
-  //   setFormData((prev) => ({ ...prev, [name]: value }));
+  //   let updatedValue = value;
+
+  //   // Validate Contact Number and Alternate Number (only numbers, max length 10)
+  //   if (name === "contactNumber" || name === "alternateNumber") {
+  //     updatedValue = updatedValue.replace(/\D/g, ""); // Remove non-numeric characters
+  //     if (updatedValue.length > 10) return; // Prevent more than 10 digits
+  //   }
+
+  //   // Convert to uppercase for PAN card
+  //   if (name === "panCard") {
+  //     updatedValue = updatedValue.toUpperCase();
+  //   }
+
+  //   // Prepare updated formData
+  //   let updatedFormData = {
+  //     ...formData,
+  //     [name]: updatedValue,
+  //   };
+
+  //   // Reset paymentMode when paymentType changes
+  //   if (name === "paymentType") {
+  //     updatedFormData.paymentMode = "";
+  //   }
+
+  //   // Update formData with the new values
+  //   setFormData(updatedFormData);
+
+  //   // Validate fields after updating
+  //   validateFields(updatedFormData);
   // };
 
   const handleChange = (e) => {
@@ -378,8 +481,8 @@ export default function AddCandForm() {
 
     // Validate Contact Number and Alternate Number (only numbers, max length 10)
     if (name === "contactNumber" || name === "alternateNumber") {
-      updatedValue = updatedValue.replace(/\D/g, ""); // Remove non-numeric characters
-      if (updatedValue.length > 10) return; // Prevent more than 10 digits
+      updatedValue = updatedValue.replace(/\D/g, "");
+      if (updatedValue.length > 10) return;
     }
 
     // Convert to uppercase for PAN card
@@ -387,17 +490,24 @@ export default function AddCandForm() {
       updatedValue = updatedValue.toUpperCase();
     }
 
-    // Update formData with the new value
-    setFormData((prev) => ({
-      ...prev,
-      [name]: updatedValue,
-    }));
-
-    // Validate fields after updating
-    validateFields({
+    let updatedFormData = {
       ...formData,
       [name]: updatedValue,
-    });
+    };
+
+    // Reset paymentMode and amount fields when paymentType changes
+    if (name === "paymentType") {
+      updatedFormData = {
+        ...updatedFormData,
+        paymentMode: "",
+        fullPaidAmount: 0,
+        fullAmountInPartialMode: 0,
+        partialPaidAmount: 0,
+      };
+    }
+
+    setFormData(updatedFormData);
+    validateFields(updatedFormData);
   };
 
   const calculateTotalPrice = () => {
@@ -405,11 +515,11 @@ export default function AddCandForm() {
     let total = 0;
 
     selectedCourses.forEach((courseName) => {
-      const course = coursesList.find(
+      const course = singlePaymentList.find(
         (course) => course.courseName === courseName,
       );
       if (course) {
-        total += course.coursePrice;
+        total += course.amount;
       }
     });
 
@@ -436,19 +546,11 @@ export default function AddCandForm() {
         ? [...selected, value]
         : selected.filter((item) => item !== value);
 
-      const newTotal = updatedSelected.reduce((acc, courseName) => {
-        const course = coursesList.find((c) => c.courseName === courseName);
-        return acc + (course?.coursePrice || 0);
-      }, 0);
-
-      const partial = parseFloat(prev.partialPaidAmount);
-      const remaining = newTotal - partial;
-
+      // Do NOT recalculate total or remaining here since these should be based on user input fields
       return {
         ...prev,
         selectedCourse: updatedSelected,
-        totalPayableAmount: newTotal,
-        remainingAmount: remaining > 0 ? remaining : 0,
+        // Keep totalPayableAmount and remainingAmount unchanged here
       };
     });
   };
@@ -700,19 +802,10 @@ export default function AddCandForm() {
                           >
                             Course Name
                           </TableCell>
-                          <TableCell
-                            align="center"
-                            sx={{
-                              fontWeight: "bold",
-                              border: "1px solid #ddd",
-                            }}
-                          >
-                            Course Price
-                          </TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {coursesList.map((course, index) => (
+                        {singlePaymentList.map((course, index) => (
                           <TableRow
                             key={course.id}
                             sx={{
@@ -749,9 +842,6 @@ export default function AddCandForm() {
                               }}
                             >
                               {course?.courseName}
-                            </TableCell>
-                            <TableCell align="center">
-                              Rs. {formatPrice(course?.coursePrice)}
                             </TableCell>
                           </TableRow>
                         ))}
@@ -801,7 +891,28 @@ export default function AddCandForm() {
                       />
                     </RadioGroup>
                   </FormControl>
-
+                  {formData?.paymentType === "Full Payment" && (
+                    <TextField
+                      label="Full Amount To Be Paid"
+                      name="fullPaidAmount"
+                      type="number"
+                      onWheel={(e) => e.target.blur()}
+                      value={formData?.fullPaidAmount}
+                      onChange={(e) => handleFullAmtChange(e)}
+                      margin="dense"
+                    />
+                  )}
+                  {formData?.paymentType === "Partial Payment" && (
+                    <TextField
+                      label="Full Amount To Be Paid"
+                      name="totalAmount"
+                      type="number"
+                      onWheel={(e) => e.target.blur()}
+                      value={formData?.fullAmountInPartialMode}
+                      onChange={(e) => handleFullAmountInPartialMode(e)}
+                      margin="dense"
+                    />
+                  )}
                   {formData?.paymentType === "Partial Payment" && (
                     <TextField
                       label="Partial Amount To Be Paid"
@@ -888,7 +999,14 @@ export default function AddCandForm() {
 
                 <div className="inline-flex w-full items-center justify-between">
                   <p className="text-md font-semibold">Price:</p>
-                  <strong>Rs. {formatPrice(calculateTotalPrice())}</strong>
+                  <strong>
+                    Rs.
+                    {formatPrice(
+                      formData.paymentType === "Partial Payment"
+                        ? formData.fullAmountInPartialMode || 0
+                        : formData.fullPaidAmount || 0,
+                    )}
+                  </strong>
                 </div>
 
                 <div className="inline-flex w-full items-center justify-between">
@@ -900,9 +1018,9 @@ export default function AddCandForm() {
                         : "text-gray-500"
                     }`}
                   >
-                    {formData.paymentType === "Full Payment"
-                      ? "Rs. 0"
-                      : `Rs. ${formatPrice(formData.remainingAmount)}`}
+                    {formData.paymentType === "Partial Payment"
+                      ? `Rs. ${formatPrice(formData.remainingAmount)}`
+                      : "Rs. 0"}
                   </strong>
                 </div>
 
@@ -913,12 +1031,8 @@ export default function AddCandForm() {
                     Subtotal:
                   </p>
                   <strong className="text-2xl md:text-3xl">
-                    <small>Rs.</small>{" "}
-                    {formatPrice(
-                      formData?.paymentMode === "Online"
-                        ? calculateTotalPrice() + calculateTotalPrice() * 0.18
-                        : calculateTotalPrice(),
-                    )}
+                    <small>Rs.</small>
+                    {formatPrice(formData.totalPayableAmount)}
                   </strong>
                 </div>
 

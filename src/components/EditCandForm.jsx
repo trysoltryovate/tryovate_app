@@ -41,7 +41,7 @@ const steps = [
 export default function EditCandForm({ candidate, candidateId }) {
   const [activeStep, setActiveStep] = React.useState(0);
   const [formData, setFormData] = React.useState(candidate);
-  console.log(candidate);
+  //console.log(candidate);
 
   const [snackbar, setSnackbar] = React.useState({
     open: false,
@@ -226,7 +226,13 @@ export default function EditCandForm({ candidate, candidateId }) {
     if (!isValid) return;
 
     try {
-      let totalAmount = calculateTotalPrice();
+      let totalAmount;
+      if (formData.paymentType === "Full Payment") {
+        totalAmount = formData.fullPaidAmount;
+      } else {
+        totalAmount = formData.fullAmountInPartialMode;
+      }
+      console.log(totalAmount);
 
       if (formData.paymentMode === "Online") {
         totalAmount += totalAmount * 0.18;
@@ -235,10 +241,6 @@ export default function EditCandForm({ candidate, candidateId }) {
       const dataToSubmit = {
         ...formData,
         totalPayableAmount: totalAmount,
-        remainingAmount:
-          formData.paymentType === "Full Payment"
-            ? 0
-            : totalAmount - (formData.partialPaidAmount || 0),
       };
 
       const response = await axios.put(

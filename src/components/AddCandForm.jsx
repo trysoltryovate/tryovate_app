@@ -110,57 +110,6 @@ export default function AddCandForm() {
     formData.paymentType,
   ]);
 
-  <div className="space-y-4">
-    {/* GST */}
-    <span className="inline-flex items-center gap-2">
-      <small className="font-medium opacity-75">GST:</small>
-      <p className="text-sm">
-        {formData?.paymentMode === "Online" ? "18%" : "NA"}
-      </p>
-    </span>
-
-    {/* Price */}
-    <div className="inline-flex w-full items-center justify-between">
-      <p className="text-md font-semibold">Price:</p>
-      <strong>
-        Rs.
-        {formatPrice(
-          formData.paymentType === "Partial Payment"
-            ? formData.fullAmountInPartialMode || 0
-            : formData.fullPaidAmount || 0,
-        )}
-      </strong>
-    </div>
-
-    {/* Remaining Amount */}
-    <div className="inline-flex w-full items-center justify-between">
-      <p className="text-md font-semibold">Remaining Amount:</p>
-      <strong
-        className={`${
-          formData.paymentType === "Partial Payment"
-            ? "text-red-500"
-            : "text-gray-500"
-        }`}
-      >
-        {formData.paymentType === "Partial Payment"
-          ? `Rs. ${formatPrice(formData.remainingAmount)}`
-          : "Rs. 0"}
-      </strong>
-    </div>
-
-    {/* Divider */}
-    <div className="h-[2px] w-full bg-gray-500" aria-hidden></div>
-
-    {/* Subtotal */}
-    <div className="mt-2 inline-flex w-full items-center justify-between">
-      <p className="text-xl font-semibold md:text-3xl lg:text-4xl">Subtotal:</p>
-      <strong className="text-2xl md:text-3xl">
-        <small>Rs.</small>
-        {formatPrice(formData.totalPayableAmount)}
-      </strong>
-    </div>
-  </div>;
-
   const [errors, setErrors] = React.useState({
     contactNumber: "",
     alternateNumber: "",
@@ -209,7 +158,7 @@ export default function AddCandForm() {
         ? formData.selectedCourse.join(", ")
         : "None";
 
-    const price = calculateTotalPrice();
+    const price = formData.fullAmountInPartialMode;
     const gstIncluded = formData.paymentMode === "Online";
     const subtotal = gstIncluded ? price + price * 0.18 : price;
 
@@ -353,21 +302,22 @@ export default function AddCandForm() {
     if (!isValid) return; // Prevent submission if any field is invalid
     try {
       // Calculate the total amount based on selected courses
-      let totalAmount = calculateTotalPrice();
+      let totalAmount;
+      if (formData.paymentType === "Full Payment") {
+        totalAmount = formData.fullPaidAmount;
+      } else {
+        totalAmount = formData.fullAmountInPartialMode;
+      }
+      console.log(totalAmount);
 
       // If payment mode is Online, add GST
       if (formData.paymentMode === "Online") {
         totalAmount += totalAmount * 0.18; // Adding 18% GST
       }
-
       // Prepare the data to submit
       const dataToSubmit = {
         ...formData,
         totalPayableAmount: totalAmount, // Ensure totalPayableAmount includes GST
-        remainingAmount:
-          formData.paymentType === "Full Payment"
-            ? 0
-            : totalAmount - (formData.partialPaidAmount || 0), // Calculate remaining amount
       };
 
       const response = await axios.post(
@@ -386,10 +336,12 @@ export default function AddCandForm() {
         });
       }
     } catch (error) {
+      // Check if error.response exists and has data
+      const errorMessage =
+        error.response?.data?.statusMsg || "Something went wrong!";
       setSnackbar({
         open: true,
-        //message: "Something went wrong!",
-        message: error.response.data.statusMsg,
+        message: errorMessage,
         severity: "error",
       });
     }
@@ -470,21 +422,21 @@ export default function AddCandForm() {
     validateFields(updatedFormData);
   };
 
-  const calculateTotalPrice = () => {
-    const selectedCourses = formData.selectedCourse;
-    let total = 0;
+  // const calculateTotalPrice = () => {
+  //   const selectedCourses = formData.selectedCourse;
+  //   let total = 0;
 
-    selectedCourses.forEach((courseName) => {
-      const course = coursesList.find(
-        (course) => course.courseName === courseName,
-      );
-      if (course) {
-        total += course.amount;
-      }
-    });
+  //   selectedCourses.forEach((courseName) => {
+  //     const course = coursesList.find(
+  //       (course) => course.courseName === courseName,
+  //     );
+  //     if (course) {
+  //       total += course.amount;
+  //     }
+  //   });
 
-    return total;
-  };
+  //   return total;
+  // };
   const handleNext = () => {
     if (activeStep === steps.length - 1) {
       handleSubmit();

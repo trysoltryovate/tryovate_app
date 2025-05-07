@@ -10,6 +10,7 @@ import { emptyFormFields } from "../utils/placeholders";
 
 export default function EditCandInfo() {
   const { candidateId } = useParams();
+  //console.log(candidateId);
 
   const [candidate, setCandidate] = useState(emptyFormFields);
   const [isLoading, setIsLoading] = useState(false);
@@ -20,10 +21,15 @@ export default function EditCandInfo() {
       setIsLoading(true);
 
       try {
+        console.log(
+          `${import.meta.env.VITE_GET_CANDIDATE_BY_ID_API_URL}/${candidateId}`,
+        );
+
         const res = await axios.get(
           `${import.meta.env.VITE_GET_CANDIDATE_BY_ID_API_URL}/${candidateId}`,
         );
         const dta = res.data;
+        console.log(dta);
         setCandidate(dta);
       } catch (error) {
         console.log(error);

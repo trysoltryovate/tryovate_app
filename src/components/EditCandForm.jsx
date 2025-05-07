@@ -9,6 +9,8 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  InputLabel,
+  Select,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -25,6 +27,7 @@ import axios from "axios";
 import * as React from "react";
 import { IoMdArrowRoundForward } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+import MenuItem from "@mui/material/MenuItem";
 
 import { coursesList, formatPrice } from "../utils/constants";
 
@@ -38,7 +41,7 @@ const steps = [
 export default function EditCandForm({ candidate, candidateId }) {
   const [activeStep, setActiveStep] = React.useState(0);
   const [formData, setFormData] = React.useState(candidate);
-  console.log(formData);
+  //console.log(candidate);
 
   const [snackbar, setSnackbar] = React.useState({
     open: false,
@@ -55,8 +58,12 @@ export default function EditCandForm({ candidate, candidateId }) {
   });
 
   React.useEffect(() => {
-    let total = calculateTotalPrice();
     const partial = parseFloat(formData.partialPaidAmount) || 0;
+    const full = parseFloat(formData.fullPaidAmount) || 0;
+    const totalInPartial = parseFloat(formData.fullAmountInPartialMode) || 0;
+
+    // Determine total based on payment type
+    let total = formData.paymentType === "Full Payment" ? full : totalInPartial;
 
     // Add GST if payment mode is Online
     if (formData.paymentMode === "Online") {
@@ -73,10 +80,11 @@ export default function EditCandForm({ candidate, candidateId }) {
       remainingAmount: remaining,
     }));
   }, [
-    formData.selectedCourse,
+    formData.fullPaidAmount,
     formData.partialPaidAmount,
+    formData.fullAmountInPartialMode,
     formData.paymentMode,
-    formData.paymentType, // Ensure this is included
+    formData.paymentType,
   ]);
 
   const handleSnackbarClose = () => {
@@ -86,24 +94,15 @@ export default function EditCandForm({ candidate, candidateId }) {
   const navigate = useNavigate();
 
   const handlePartialAmtChange = (e) => {
-    const partial = parseFloat(e.target.value) || 0;
-
-    setFormData((prev) => {
-      let total = calculateTotalPrice();
-
-      // Add GST if payment mode is Online
-      if (prev.paymentMode === "Online") {
-        total += total * 0.18; // Correctly add GST to the total
-      }
-
-      const remaining = total - partial;
-
-      return {
-        ...prev,
-        partialPaidAmount: partial,
-        remainingAmount: remaining,
-      };
-    });
+    const partial = parseFloat(e.target.value);
+    const total = formData.fullAmountInPartialMode;
+    // Calculate remaining amount, ensure not negative
+    const remaining = total - partial > 0 ? total - partial : 0;
+    setFormData((prev) => ({
+      ...prev,
+      partialPaidAmount: partial,
+      remainingAmount: remaining,
+    }));
   };
 
   //=====================validations==========================
@@ -113,24 +112,56 @@ export default function EditCandForm({ candidate, candidateId }) {
 
     let updatedValue = value;
 
+    // Validate Contact Number and Alternate Number (only numbers, max length 10)
     if (name === "contactNumber" || name === "alternateNumber") {
       updatedValue = updatedValue.replace(/\D/g, "");
       if (updatedValue.length > 10) return;
     }
 
+    // Convert to uppercase for PAN card
     if (name === "panCard") {
       updatedValue = updatedValue.toUpperCase();
     }
 
-    setFormData((prev) => ({
-      ...prev,
-      [name]: updatedValue,
-    }));
-
-    validateFields({
+    let updatedFormData = {
       ...formData,
       [name]: updatedValue,
-    });
+    };
+
+    // Reset paymentMode and amount fields when paymentType changes
+    if (name === "paymentType") {
+      updatedFormData = {
+        ...updatedFormData,
+        paymentMode: "",
+        fullPaidAmount: 0,
+        fullAmountInPartialMode: 0,
+        partialPaidAmount: 0,
+      };
+    }
+
+    setFormData(updatedFormData);
+    validateFields(updatedFormData);
+  };
+
+  const handleFullAmtChange = (e) => {
+    let updatedValue = parseFloat(e.target.value);
+    setFormData((prev) => ({
+      ...prev,
+      fullPaidAmount: updatedValue,
+    }));
+  };
+  const handleFullAmountInPartialMode = (e) => {
+    const total = parseFloat(e.target.value);
+    const partial = formData.partialPaidAmount;
+
+    // Calculate remaining amount, ensure not negative
+    const remaining = total - partial > 0 ? total - partial : 0;
+
+    setFormData((prev) => ({
+      ...prev,
+      fullAmountInPartialMode: total,
+      remainingAmount: remaining,
+    }));
   };
 
   const validateFields = (formData) => {
@@ -185,13 +216,23 @@ export default function EditCandForm({ candidate, candidateId }) {
     // Return true if no errors
     return Object.keys(newErrors).length === 0;
   };
-
+  const handleBatchId = (event) => {
+    setFormData((prev) => {
+      return { ...prev, batchId: event.target.value };
+    });
+  };
   const handleSubmit = async () => {
     const isValid = validateFields(formData);
     if (!isValid) return;
 
     try {
-      let totalAmount = calculateTotalPrice();
+      let totalAmount;
+      if (formData.paymentType === "Full Payment") {
+        totalAmount = formData.fullPaidAmount;
+      } else {
+        totalAmount = formData.fullAmountInPartialMode;
+      }
+      console.log(totalAmount);
 
       if (formData.paymentMode === "Online") {
         totalAmount += totalAmount * 0.18;
@@ -200,10 +241,6 @@ export default function EditCandForm({ candidate, candidateId }) {
       const dataToSubmit = {
         ...formData,
         totalPayableAmount: totalAmount,
-        remainingAmount:
-          formData.paymentType === "Full Payment"
-            ? 0
-            : totalAmount - (formData.partialPaidAmount || 0),
       };
 
       const response = await axios.put(
@@ -543,15 +580,6 @@ export default function EditCandForm({ candidate, candidateId }) {
                           >
                             Course Name
                           </TableCell>
-                          <TableCell
-                            align="center"
-                            sx={{
-                              fontWeight: "bold",
-                              border: "1px solid #ddd",
-                            }}
-                          >
-                            Course Price
-                          </TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
@@ -593,9 +621,6 @@ export default function EditCandForm({ candidate, candidateId }) {
                             >
                               {course?.courseName}
                             </TableCell>
-                            <TableCell align="center">
-                              Rs. {formatPrice(course?.coursePrice)}
-                            </TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
@@ -606,6 +631,24 @@ export default function EditCandForm({ candidate, candidateId }) {
 
               {formData?.selectedCourse?.length > 0 && (
                 <div className="flex flex-col gap-y-1">
+                  <Box sx={{ minWidth: 120 }}>
+                    <FormControl fullWidth>
+                      <InputLabel id="demo-simple-select-label">
+                        Batch Id
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={formData.batchId}
+                        label="Batch Id"
+                        onChange={handleBatchId}
+                      >
+                        <MenuItem value="A1">A1</MenuItem>
+                        <MenuItem value="B1">B1</MenuItem>
+                        <MenuItem value="C1">C1</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Box>
                   <FormControl margin="dense">
                     <FormLabel>Payment Structure</FormLabel>
                     <RadioGroup
@@ -626,12 +669,34 @@ export default function EditCandForm({ candidate, candidateId }) {
                       />
                     </RadioGroup>
                   </FormControl>
-
+                  {formData?.paymentType === "Full Payment" && (
+                    <TextField
+                      label="Full Amount To Be Paid"
+                      name="fullPaidAmount"
+                      type="number"
+                      onWheel={(e) => e.target.blur()}
+                      value={formData?.fullPaidAmount}
+                      onChange={(e) => handleFullAmtChange(e)}
+                      margin="dense"
+                    />
+                  )}
+                  {formData?.paymentType === "Partial Payment" && (
+                    <TextField
+                      label="Full Amount To Be Paid"
+                      name="totalAmount"
+                      type="number"
+                      onWheel={(e) => e.target.blur()}
+                      value={formData?.fullAmountInPartialMode}
+                      onChange={(e) => handleFullAmountInPartialMode(e)}
+                      margin="dense"
+                    />
+                  )}
                   {formData?.paymentType === "Partial Payment" && (
                     <TextField
                       label="Partial Amount To Be Paid"
                       name="partialPaidAmount"
                       type="number"
+                      onWheel={(e) => e.target.blur()}
                       value={formData?.partialPaidAmount}
                       onChange={(e) => handlePartialAmtChange(e)}
                       margin="dense"
@@ -665,7 +730,17 @@ export default function EditCandForm({ candidate, candidateId }) {
             </div>
             {/* Checkout Details */}
             <div className="h-auto w-full rounded-xl border border-gray-300 bg-gray-100 p-3 md:p-4 lg:p-5">
-              <h5 className="text-lg font-semibold md:text-xl">Summary</h5>
+              {/* Header Row with Flexbox */}
+              <div className="mb-2 flex items-center justify-between">
+                <h5 className="text-lg font-semibold md:text-xl">Summary</h5>
+                {/* <Button
+                  onClick={downloadSummaryAsPDF}
+                  variant="contained"
+                  color="primary"
+                >
+                  Print Summary
+                </Button> */}
+              </div>
 
               <div className="mt-3 flex w-full flex-col items-start justify-center gap-y-2 md:mt-5">
                 <span className="inline-flex w-full items-center justify-between">
@@ -674,6 +749,7 @@ export default function EditCandForm({ candidate, candidateId }) {
                   </small>
                   <p className="text-sm">{formData?.selectedCourse?.length}</p>
                 </span>
+
                 <span className="inline-flex w-full items-center justify-between">
                   <small className="font-medium opacity-75">
                     Payment Structure:
@@ -682,6 +758,7 @@ export default function EditCandForm({ candidate, candidateId }) {
                     {formData?.paymentType ? formData?.paymentType : "-/-"}
                   </p>
                 </span>
+
                 <span className="inline-flex w-full items-center justify-between">
                   <small className="font-medium opacity-75">
                     Mode of payment:
@@ -690,6 +767,7 @@ export default function EditCandForm({ candidate, candidateId }) {
                     {formData?.paymentMode ? formData?.paymentMode : "-/-"}
                   </p>
                 </span>
+
                 <span className="inline-flex w-full items-center justify-between">
                   <small className="font-medium opacity-75">GST:</small>
                   <p className="text-sm">
@@ -699,13 +777,18 @@ export default function EditCandForm({ candidate, candidateId }) {
 
                 <div className="inline-flex w-full items-center justify-between">
                   <p className="text-md font-semibold">Price:</p>
-
-                  <strong>Rs. {formatPrice(calculateTotalPrice())}</strong>
+                  <strong>
+                    Rs.
+                    {formatPrice(
+                      formData.paymentType === "Partial Payment"
+                        ? formData.fullAmountInPartialMode || 0
+                        : formData.fullPaidAmount || 0,
+                    )}
+                  </strong>
                 </div>
 
                 <div className="inline-flex w-full items-center justify-between">
                   <p className="text-md font-semibold">Remaining Amount:</p>
-
                   <strong
                     className={`${
                       formData.paymentType === "Partial Payment"
@@ -714,14 +797,8 @@ export default function EditCandForm({ candidate, candidateId }) {
                     }`}
                   >
                     {formData.paymentType === "Partial Payment"
-                      ? `Rs. ${formatPrice(
-                          calculateTotalPrice() +
-                            (formData.paymentMode === "Online"
-                              ? calculateTotalPrice() * 0.18
-                              : 0) -
-                            (formData.partialPaidAmount ?? 0) || 0,
-                        )}`
-                      : "NA"}
+                      ? `Rs. ${formatPrice(formData.remainingAmount)}`
+                      : "Rs. 0"}
                   </strong>
                 </div>
 
@@ -731,14 +808,9 @@ export default function EditCandForm({ candidate, candidateId }) {
                   <p className="text-xl font-semibold md:text-3xl lg:text-4xl">
                     Subtotal:
                   </p>
-
                   <strong className="text-2xl md:text-3xl">
-                    <small>Rs.</small>{" "}
-                    {formatPrice(
-                      formData?.paymentMode === "Online"
-                        ? calculateTotalPrice() + calculateTotalPrice() * 0.18
-                        : calculateTotalPrice(),
-                    )}
+                    <small>Rs.</small>
+                    {formatPrice(formData.totalPayableAmount)}
                   </strong>
                 </div>
 
@@ -765,7 +837,7 @@ export default function EditCandForm({ candidate, candidateId }) {
               className="rounded-lg border border-green-500 bg-green-200 px-4 py-2 text-green-800"
               onClick={handleNext}
             >
-              Update Candidate
+              Add Candidate
             </button>
           </div>
         );

@@ -36,45 +36,30 @@ export const tableFields = [
 ];
 
 // Offering Courses List...
+
 export const coursesList = [
-  {
-    id: "1",
-    courseName: "Advanced Generative AI Program",
-    coursePrice: 99000,
-  },
+  { id: "1", courseName: "Java Backend", amount: 35000 },
   {
     id: "2",
-    courseName: "Data Science (Data Analytics + AI / ML / DL)",
-    coursePrice: 80000,
+    courseName: "JAVA FS (Java Backend + React Js + AWS)",
+    amount: 50000,
   },
-  {
-    id: "3",
-    courseName: "Data Analytics (Python + SQL + Power BI + Excel)",
-    coursePrice: 50000,
-  },
-  {
-    id: "4",
-    courseName: "Data Engineer (Azure/GCP/AWS/DevOps)",
-    coursePrice: 60000,
-  },
+  { id: "3", courseName: "React JS - Front End", amount: 35000 },
+  { id: "4", courseName: ".Net (Backend) with Angular (FS)", amount: 50000 },
   {
     id: "5",
-    courseName: ".Net (Backend) with Angular (FS)",
-    coursePrice: 60000,
+    courseName: "Data Engineer – (Azure/GCP/AWS/DevOps)",
+    amount: 45000,
   },
   {
     id: "6",
-    courseName: "React JS - Front End",
-    coursePrice: 40000,
+    courseName: "Data Analytics (Python + SQL + Power BI + Excel)",
+    amount: 45000,
   },
   {
     id: "7",
-    courseName: "JAVA FS (Java Backend + React JS + AWS)",
-    coursePrice: 60000,
+    courseName: "Data Science (Data Analytics + AI / ML / DL)",
+    amount: 65000,
   },
-  {
-    id: "8",
-    courseName: "Java Backend",
-    coursePrice: 40000,
-  },
+  { id: "8", courseName: "Advanced Generative AI Program", amount: 85000 },
 ];

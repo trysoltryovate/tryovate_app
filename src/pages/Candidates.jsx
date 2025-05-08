@@ -30,7 +30,7 @@ import * as XLSX from "xlsx";
 import ConfirmDeleteDialog from "../components/ConfirmDelete";
 import Loader from "../components/Loader";
 import NotFound from "../components/Not-Found";
-import { tableFields } from "../utils/constants";
+import { formatPrice, tableFields } from "../utils/constants";
 import { gapFromGraduationYear } from "../utils/constants";
 
 export default function Candidates() {
@@ -368,7 +368,9 @@ export default function Candidates() {
                         {candidate?.id}
                       </TableCell>
                       <TableCell align="center">{candidate.fullName}</TableCell>
-                      <TableCell align="center">{candidate.dob}</TableCell>
+                      <TableCell align="center" sx={{ textWrap: "nowrap" }}>
+                        {candidate.dob}
+                      </TableCell>
                       <TableCell align="center">
                         {candidate.contactNumber}
                       </TableCell>
@@ -384,7 +386,7 @@ export default function Candidates() {
                         {candidate.pgYearOfPassing}
                       </TableCell>
 
-                      <TableCell align="center">
+                      <TableCell align="center" sx={{ textWrap: "nowrap" }}>
                         <ul>
                           {candidate.selectedCourse &&
                             candidate.selectedCourse.map((course, i) => {
@@ -392,9 +394,21 @@ export default function Candidates() {
                             })}
                         </ul>
                       </TableCell>
-                      <TableCell align="center">{candidate.batchId}</TableCell>
-                      <TableCell align="center">
+                      <TableCell align="center" sx={{ textWrap: "nowrap" }}>
+                        {candidate.batchId}
+                      </TableCell>
+                      <TableCell align="center" sx={{ textWrap: "nowrap" }}>
                         {gapFromGraduationYear(candidate.yearOfPassing)}
+                      </TableCell>
+                      <TableCell align="center" sx={{ textWrap: "nowrap" }}>
+                        Rs. {formatPrice(candidate?.totalPayableAmount)}
+                      </TableCell>
+
+                      <TableCell align="center" sx={{ textWrap: "nowrap" }}>
+                        Rs. {formatPrice(candidate?.partialPaidAmount)}
+                      </TableCell>
+                      <TableCell align="center" sx={{ textWrap: "nowrap" }}>
+                        Rs. {formatPrice(candidate?.remainingAmount)}
                       </TableCell>
                       <TableCell align="center">
                         <button

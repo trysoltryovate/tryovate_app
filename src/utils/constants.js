@@ -31,6 +31,9 @@ export const tableFields = [
   "Course",
   "Batch Id",
   "Year Gap",
+  "Total Amount",
+  "Partial Paid Amount",
+  "Remaining Amount",
   "Edit",
   "Delete",
 ];

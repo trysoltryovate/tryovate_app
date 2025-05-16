@@ -41,7 +41,7 @@ const steps = [
 export default function EditCandForm({ candidate, candidateId }) {
   const [activeStep, setActiveStep] = React.useState(0);
   const [formData, setFormData] = React.useState(candidate);
-  //console.log(candidate);
+  console.log(formData);
 
   const [snackbar, setSnackbar] = React.useState({
     open: false,
@@ -57,17 +57,21 @@ export default function EditCandForm({ candidate, candidateId }) {
     panCard: "",
   });
 
+  //=======================changes in useEffect==========================
   React.useEffect(() => {
     const partial = parseFloat(formData.partialPaidAmount) || 0;
     const full = parseFloat(formData.fullPaidAmount) || 0;
     const totalInPartial = parseFloat(formData.fullAmountInPartialMode) || 0;
+    const gstPercentage = parseFloat(formData.gstPercent) || 0;
 
     // Determine total based on payment type
     let total = formData.paymentType === "Full Payment" ? full : totalInPartial;
 
-    // Add GST if payment mode is Online
-    if (formData.paymentMode === "Online") {
-      total += total * 0.18; // Correctly add GST to the total
+    // Add GST if payment mode is Online and GST is applicable
+    let gstAmount = 0;
+    if (formData.paymentMode === "Online" && gstPercentage > 0) {
+      gstAmount = (total * gstPercentage) / 100;
+      total += gstAmount;
     }
 
     // Set remaining amount based on payment type
@@ -78,6 +82,7 @@ export default function EditCandForm({ candidate, candidateId }) {
       ...prev,
       totalPayableAmount: total,
       remainingAmount: remaining,
+      gstAmount: gstAmount.toFixed(2), // <-- Store GST value here using existing variable name
     }));
   }, [
     formData.fullPaidAmount,
@@ -85,7 +90,38 @@ export default function EditCandForm({ candidate, candidateId }) {
     formData.fullAmountInPartialMode,
     formData.paymentMode,
     formData.paymentType,
+    formData.gstPercent,
   ]);
+
+  // React.useEffect(() => {
+  //   const partial = parseFloat(formData.partialPaidAmount) || 0;
+  //   const full = parseFloat(formData.fullPaidAmount) || 0;
+  //   const totalInPartial = parseFloat(formData.fullAmountInPartialMode) || 0;
+
+  //   // Determine total based on payment type
+  //   let total = formData.paymentType === "Full Payment" ? full : totalInPartial;
+
+  //   // Add GST if payment mode is Online
+  //   if (formData.paymentMode === "Online") {
+  //     total += total * 0.18; // Correctly add GST to the total
+  //   }
+
+  //   // Set remaining amount based on payment type
+  //   const remaining =
+  //     formData.paymentType === "Full Payment" ? 0 : total - partial;
+
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     totalPayableAmount: total,
+  //     remainingAmount: remaining,
+  //   }));
+  // }, [
+  //   formData.fullPaidAmount,
+  //   formData.partialPaidAmount,
+  //   formData.fullAmountInPartialMode,
+  //   formData.paymentMode,
+  //   formData.paymentType,
+  // ]);
 
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
@@ -102,6 +138,20 @@ export default function EditCandForm({ candidate, candidateId }) {
       ...prev,
       partialPaidAmount: partial,
       remainingAmount: remaining,
+    }));
+  };
+
+  //================GST-Calculations============================
+
+  const handleGstAmountChange = (e) => {
+    const input = e.target.value;
+    const price = formData.price;
+    const gst = input ? (price * parseFloat(input)) / 100 : 0;
+
+    setFormData((prev) => ({
+      ...prev,
+      gstPercent: input,
+      //calculatedGst: gst.toFixed(2),
     }));
   };
 
@@ -136,6 +186,14 @@ export default function EditCandForm({ candidate, candidateId }) {
         fullPaidAmount: 0,
         fullAmountInPartialMode: 0,
         partialPaidAmount: 0,
+      };
+    }
+    // Reset GST field when paymentMode changes
+    if (name === "paymentMode") {
+      updatedFormData = {
+        ...updatedFormData,
+        gstPercent: 0,
+        //calculatedGst: 0,
       };
     }
 
@@ -221,6 +279,8 @@ export default function EditCandForm({ candidate, candidateId }) {
       return { ...prev, batchId: event.target.value };
     });
   };
+
+  //====================changes handlesubmit========================
   const handleSubmit = async () => {
     const isValid = validateFields(formData);
     if (!isValid) return;
@@ -232,10 +292,12 @@ export default function EditCandForm({ candidate, candidateId }) {
       } else {
         totalAmount = formData.fullAmountInPartialMode;
       }
-      console.log(totalAmount);
 
-      if (formData.paymentMode === "Online") {
-        totalAmount += totalAmount * 0.18;
+      // Add GST if payment mode is Online and gstPercent is present
+      if (formData.paymentMode === "Online" && formData.gstPercent) {
+        const gstPercentage = parseFloat(formData.gstPercent);
+        const gstAmount = (totalAmount * gstPercentage) / 100;
+        totalAmount += gstAmount;
       }
 
       const dataToSubmit = {
@@ -254,28 +316,21 @@ export default function EditCandForm({ candidate, candidateId }) {
         }, 800);
         setSnackbar({
           open: true,
-          message: "Candidate Updated Successfully!",
+          message: "Candidate Added Successfully!",
           severity: "success",
         });
       }
     } catch (error) {
-      console.error("Error submitting form:", error);
-      if (error.response) {
-        setSnackbar({
-          open: true,
-          message: error.response.data.message || "Something went wrong!",
-          severity: "error",
-        });
-      } else {
-        console.error("Error:", error.message);
-        setSnackbar({
-          open: true,
-          message: "An unexpected error occured.",
-          severity: "error",
-        });
-      }
+      const errorMessage =
+        error.response?.data?.statusMsg || "Something went wrong!";
+      setSnackbar({
+        open: true,
+        message: errorMessage,
+        severity: "error",
+      });
     }
   };
+
   const handleNext = () => {
     if (activeStep === steps.length - 1) {
       handleSubmit();
@@ -723,6 +778,18 @@ export default function EditCandForm({ candidate, candidateId }) {
                           label="Cash"
                         />
                       </RadioGroup>
+                      {formData?.paymentMode === "Online" && (
+                        <TextField
+                          label="OnlineMode GstAmount"
+                          name="Payment Mode"
+                          type="number"
+                          margin="dense"
+                          fullWidth
+                          onWheel={(e) => e.target.blur()}
+                          value={formData?.gstPercent}
+                          onChange={(e) => handleGstAmountChange(e)}
+                        />
+                      )}
                     </FormControl>
                   )}
                 </div>
@@ -771,7 +838,11 @@ export default function EditCandForm({ candidate, candidateId }) {
                 <span className="inline-flex w-full items-center justify-between">
                   <small className="font-medium opacity-75">GST:</small>
                   <p className="text-sm">
-                    {formData?.paymentMode === "Online" ? "18%" : "NA"}
+                    {formData?.paymentMode === "Online" &&
+                    parseFloat(formData?.gstAmount) > 0 &&
+                    parseFloat(formData?.gstPercent) > 0
+                      ? `(${formData.gstPercent}%): Rs. ${formData.gstAmount}`
+                      : "NA"}
                   </p>
                 </span>
 
@@ -810,7 +881,7 @@ export default function EditCandForm({ candidate, candidateId }) {
                   </p>
                   <strong className="text-2xl md:text-3xl">
                     <small>Rs.</small>
-                    {formatPrice(formData.totalPayableAmount)}
+                    {formData.totalPayableAmount}
                   </strong>
                 </div>
 

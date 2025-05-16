@@ -78,19 +78,26 @@ export default function AddCandForm() {
     partialPaidAmount: 0,
     totalPayableAmount: 0,
     remainingAmount: 0,
+    gstAmount: 0,
+    gstPercent: "",
   });
+
+  //=================UseEffect changes===========================
 
   React.useEffect(() => {
     const partial = parseFloat(formData.partialPaidAmount) || 0;
     const full = parseFloat(formData.fullPaidAmount) || 0;
     const totalInPartial = parseFloat(formData.fullAmountInPartialMode) || 0;
+    const gstPercentage = parseFloat(formData.gstPercent) || 0;
 
     // Determine total based on payment type
     let total = formData.paymentType === "Full Payment" ? full : totalInPartial;
 
-    // Add GST if payment mode is Online
-    if (formData.paymentMode === "Online") {
-      total += total * 0.18; // Correctly add GST to the total
+    // Add GST if payment mode is Online and GST is applicable
+    let gstAmount = 0;
+    if (formData.paymentMode === "Online" && gstPercentage > 0) {
+      gstAmount = (total * gstPercentage) / 100;
+      total += gstAmount;
     }
 
     // Set remaining amount based on payment type
@@ -101,6 +108,8 @@ export default function AddCandForm() {
       ...prev,
       totalPayableAmount: total,
       remainingAmount: remaining,
+
+      gstAmount: gstAmount.toFixed(2), // <-- Store GST value here using existing variable name
     }));
   }, [
     formData.fullPaidAmount,
@@ -108,6 +117,7 @@ export default function AddCandForm() {
     formData.fullAmountInPartialMode,
     formData.paymentMode,
     formData.paymentType,
+    formData.gstPercent,
   ]);
 
   const [errors, setErrors] = React.useState({
@@ -131,17 +141,20 @@ export default function AddCandForm() {
   });
   //console.log(formData);
 
+  //===================Changes downloadSummaryAsPDF=====================
+
+  //
   const downloadSummaryAsPDF = () => {
     const doc = new jsPDF();
     const startX = 20;
     let startY = 20;
     const lineHeight = 10;
-    const logoWidth = 50; // Adjust as needed
-    const logoHeight = 40; // Adjust as needed
+    const logoWidth = 50;
+    const logoHeight = 40;
 
     // Add blue background
-    doc.setFillColor(6, 34, 110); // Blue Color
-    doc.rect(0, 0, doc.internal.pageSize.getWidth(), 30, "F"); // Background Rectangle
+    doc.setFillColor(6, 34, 110);
+    doc.rect(0, 0, doc.internal.pageSize.getWidth(), 30, "F");
 
     // Add Logo
     doc.addImage(
@@ -151,16 +164,26 @@ export default function AddCandForm() {
       -5,
       logoWidth,
       logoHeight,
-    ); // Centered Logo
+    );
 
     const selectedCourses =
       formData.selectedCourse.length > 0
         ? formData.selectedCourse.join(", ")
         : "None";
 
-    const price = formData.fullAmountInPartialMode;
-    const gstIncluded = formData.paymentMode === "Online";
-    const subtotal = gstIncluded ? price + price * 0.18 : price;
+    // Determine base price based on payment type
+    const price =
+      formData.paymentType === "Full Payment"
+        ? parseFloat(formData.fullPaidAmount) || 0
+        : parseFloat(formData.fullAmountInPartialMode) || 0;
+
+    const gstIncluded =
+      formData.paymentMode === "Online" && formData.gstPercent;
+    const gstPercentage = gstIncluded
+      ? parseFloat(formData.gstPercent) || 0
+      : 0;
+    const gstAmount = (price * gstPercentage) / 100;
+    const subtotal = price + gstAmount;
 
     const isPartial = formData.paymentType === "Partial Payment";
 
@@ -168,9 +191,13 @@ export default function AddCandForm() {
       ["Courses Selected", selectedCourses],
       ["Payment Structure", formData.paymentType],
       ["Mode of Payment", formData.paymentMode || "-/-"],
-      ["GST", gstIncluded ? "18%" : "NA"],
+      ["GST", gstIncluded ? `${gstPercentage}%` : "NA"],
       ["Price", `Rs. ${formatPrice(price)}`],
     ];
+
+    if (gstIncluded) {
+      data.push(["GST Amount", `Rs. ${formatPrice(gstAmount)}`]);
+    }
 
     if (isPartial) {
       data.push([
@@ -186,7 +213,7 @@ export default function AddCandForm() {
     data.push(["Subtotal", `Rs. ${formatPrice(subtotal)}`]);
 
     // Header
-    startY += 30; // Move down after the logo and background
+    startY += 30;
     doc.setFont("helvetica", "bold");
     doc.setTextColor(0, 0, 0);
     doc.text("Description", startX, startY);
@@ -203,7 +230,7 @@ export default function AddCandForm() {
         doc.setTextColor(0, 0, 0);
       } else if (desc === "Remaining Amount") {
         doc.setFont("helvetica", "normal");
-        doc.setTextColor(255, 0, 0); // Red
+        doc.setTextColor(255, 0, 0);
       } else {
         doc.setFont("helvetica", "normal");
         doc.setTextColor(0, 0, 0);
@@ -214,15 +241,18 @@ export default function AddCandForm() {
       doc.text(detailLines, startX + 90, startY);
       startY += detailLines.length * lineHeight;
     });
+
     startY += -2;
     doc.line(startX, startY, startX + 170, startY);
     startY += 2;
+
     // Add Contact Information
-    startY += 8; // Add some space before the contact info
+    startY += 8;
     doc.setFont("helvetica", "bold");
     doc.text("Our Address", startX, startY);
-    startY += lineHeight; // Move down after the header
+    startY += lineHeight;
     doc.setFont("helvetica", "normal");
+
     const address =
       "6th floor, 2-48/5/6, Vaishnavi's Cynosure, Gachibowli Rd, Opp. RTTC, Telecom Nagar Extension, Gachibowli, Hyderabad, Telangana 500032";
     const email = "E-mail: info@tryovate.com";
@@ -295,29 +325,30 @@ export default function AddCandForm() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async () => {
-    // Final validation before submit
-    const isValid = validateFields(formData);
+  //================changes in handlesubmit=====================
 
-    if (!isValid) return; // Prevent submission if any field is invalid
+  const handleSubmit = async () => {
+    const isValid = validateFields(formData);
+    if (!isValid) return;
+
     try {
-      // Calculate the total amount based on selected courses
       let totalAmount;
       if (formData.paymentType === "Full Payment") {
         totalAmount = formData.fullPaidAmount;
       } else {
         totalAmount = formData.fullAmountInPartialMode;
       }
-      console.log(totalAmount);
 
-      // If payment mode is Online, add GST
-      if (formData.paymentMode === "Online") {
-        totalAmount += totalAmount * 0.18; // Adding 18% GST
+      // Add GST if payment mode is Online and gstAmt is present
+      if (formData.paymentMode === "Online" && formData.gstPercent) {
+        const gstPercentage = parseFloat(formData.gstPercent);
+        const gstAmount = (totalAmount * gstPercentage) / 100;
+        totalAmount += gstAmount;
       }
-      // Prepare the data to submit
+
       const dataToSubmit = {
         ...formData,
-        totalPayableAmount: totalAmount, // Ensure totalPayableAmount includes GST
+        totalPayableAmount: totalAmount,
       };
 
       const response = await axios.post(
@@ -336,7 +367,6 @@ export default function AddCandForm() {
         });
       }
     } catch (error) {
-      // Check if error.response exists and has data
       const errorMessage =
         error.response?.data?.statusMsg || "Something went wrong!";
       setSnackbar({
@@ -346,6 +376,10 @@ export default function AddCandForm() {
       });
     }
   };
+
+  //===============Changes in Handlesubmit=======================
+
+  //
 
   const handleSnackbarClose = () => {
     setSnackbar({ ...snackbar, open: false });
@@ -386,6 +420,20 @@ export default function AddCandForm() {
     }));
   };
 
+  const handleGstAmountChange = (e) => {
+    const input = e.target.value;
+    const price = parseFloat(formData.price) || 0;
+    const gstPercentage = parseFloat(input) || 0;
+
+    const gst = (price * gstPercentage) / 100;
+
+    setFormData((prev) => ({
+      ...prev,
+      gstPercent: input,
+      //calculatedGst: gst.toFixed(2),
+    }));
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -415,6 +463,14 @@ export default function AddCandForm() {
         fullPaidAmount: 0,
         fullAmountInPartialMode: 0,
         partialPaidAmount: 0,
+      };
+    }
+    // Reset GST field when paymentMode changes
+    if (name === "paymentMode") {
+      updatedFormData = {
+        ...updatedFormData,
+        gstPercent: 0,
+        //calculatedGst: 0,
       };
     }
 
@@ -851,12 +907,25 @@ export default function AddCandForm() {
                           control={<Radio />}
                           label="Online"
                         />
+
                         <FormControlLabel
                           value="Cash"
                           control={<Radio />}
                           label="Cash"
                         />
                       </RadioGroup>
+                      {formData?.paymentMode === "Online" && (
+                        <TextField
+                          label="OnlineMode GstAmount"
+                          name="Payment Mode"
+                          type="number"
+                          margin="dense"
+                          fullWidth
+                          onWheel={(e) => e.target.blur()}
+                          value={formData?.gstPercent}
+                          onChange={(e) => handleGstAmountChange(e)}
+                        />
+                      )}
                     </FormControl>
                   )}
                 </div>
@@ -905,7 +974,11 @@ export default function AddCandForm() {
                 <span className="inline-flex w-full items-center justify-between">
                   <small className="font-medium opacity-75">GST:</small>
                   <p className="text-sm">
-                    {formData?.paymentMode === "Online" ? "18%" : "NA"}
+                    {formData?.paymentMode === "Online" &&
+                    parseFloat(formData?.gstAmount) > 0 &&
+                    parseFloat(formData?.gstPercent) > 0
+                      ? `(${formData.gstPercent}%): Rs. ${formData.gstAmount}`
+                      : "NA"}
                   </p>
                 </span>
 
